@@ -1,1 +1,13 @@
+
+:root {
+  --color-rosa: #ff4081;
+  --color-rosa-claro: #ff80ab;
+  --color-morado: #a21db9;
+  --color-morado-oscuro: #5d0ba0;
+  --color-negro: #222;
+  --color-gris: #ccc;
+  --color-blanco: #fff;
+  --color-gris-fondo: #fafafa;
+}
+
 /* You can add global styles to this file, and also import other style files */

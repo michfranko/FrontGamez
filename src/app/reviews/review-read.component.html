@@ -1,0 +1,15 @@
+<app-reviews-menu></app-reviews-menu>
+<div class="review-read-container">
+  <h2>Leer Reseñas</h2>
+  <input type="text" placeholder="Buscar por nombre de juego..." [(ngModel)]="searchTerm" (ngModelChange)="filterReviews()" />
+  <div *ngIf="filteredReviews.length > 0; else noReviews">
+    <div *ngFor="let review of filteredReviews" class="review-card">
+      <h3>{{ review.nombre }}</h3>
+      <div class="review-rating">Calificación: <b>{{ review.calificacion }}</b></div>
+      <div class="review-text">{{ review.texto }}</div>
+    </div>
+  </div>
+  <ng-template #noReviews>
+    <div class="no-reviews">No hay reseñas para mostrar.</div>
+  </ng-template>
+</div>

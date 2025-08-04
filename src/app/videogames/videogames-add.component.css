@@ -1,0 +1,76 @@
+
+.videogames-add-container h2 {
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  color: #75049e;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.videogames-add-container label {
+  font-weight: 700;
+  margin-top: 1.3rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 1.15rem;
+  color: #222;
+  letter-spacing: 0.5px;
+  text-align: left;
+  margin-left: 0.1rem;
+}
+.videogames-add-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+}
+.videogames-add-container input, .videogames-add-container select {
+  width: 100%;
+  padding: 1.1rem 1.2rem;
+  border-radius: 10px;
+  border: 1.5px solid #ccc;
+  margin-bottom: 1.1rem;
+  font-size: 1.13rem;
+  background: #fafafa;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+.videogames-add-container input:focus, .videogames-add-container select:focus {
+  border: 1.5px solid #b512c7;
+  background: #fff;
+}
+.videogames-add-container select {
+  font-weight: 600;
+  color: #a21db9;
+  background: #f1edf1;
+  border: 1.5px solid #5d0ba0;
+}
+.videogames-add-container select option {
+  color: #222;
+  font-weight: 500;
+}
+.videogames-add-container button[type="submit"] {
+  background: linear-gradient(90deg, #ff4081 60%, #ff80ab 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  width: 100%;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(255,64,129,0.08);
+  letter-spacing: 0.5px;
+}
+.videogames-add-container button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(90deg, #ff80ab 0%, #ff4081 100%);
+  transform: translateY(-2px) scale(1.02);
+}
+.videogames-add-container button[type="submit"]:disabled {
+  background: #ccc;
+  color: #fff;
+  cursor: not-allowed;
+}

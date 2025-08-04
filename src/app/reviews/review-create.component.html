@@ -1,0 +1,20 @@
+<app-reviews-menu></app-reviews-menu>
+<div class="review-create-container">
+  <h2>Crear Reseña</h2>
+  <form *ngIf="games.length > 0" (ngSubmit)="createReview()" #form="ngForm">
+    <label>Selecciona un juego terminado:</label>
+    <select [(ngModel)]="selectedGameId" name="game" required>
+      <option value="" disabled selected>Selecciona...</option>
+      <option *ngFor="let game of games" [value]="game.id">{{ game.nombre }}</option>
+    </select>
+    <label>Calificación:</label>
+    <input type="number" [(ngModel)]="review.calificacion" name="calificacion" min="0" max="10" required />
+    <label>Reseña:</label>
+    <textarea [(ngModel)]="review.texto" name="texto" maxlength="300" (input)="updateCharCount()" required></textarea>
+    <div class="char-count">Caracteres restantes: {{ 300 - (review.texto.length || 0) }}</div>
+    <button type="submit" [disabled]="!selectedGameId || review.texto.length === 0 || review.texto.length > 300">Guardar Reseña</button>
+  </form>
+  <div *ngIf="games.length === 0">
+    No hay juegos terminados disponibles para reseñar.
+  </div>
+</div>

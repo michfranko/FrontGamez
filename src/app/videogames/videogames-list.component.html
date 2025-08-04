@@ -1,0 +1,34 @@
+<h2>Lista de Videojuegos</h2>
+<div class="search-sort-bar">
+  <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (ngModelChange)="filterGames()" />
+  <select [(ngModel)]="sortOption" (change)="filterGames()">
+    <option value="">Ordenar por...</option>
+    <option value="calificacion-desc">Calificación más alta</option>
+    <option value="calificacion-asc">Calificación más baja</option>
+    <option value="estado-terminado">Solo terminados</option>
+    <option value="estado-jugando">Solo jugando</option>
+    <option value="estado-pendiente">Solo pendientes</option>
+    <option value="version-digital">Solo versión digital</option>
+    <option value="version-fisico">Solo versión físico</option>
+  </select>
+</div>
+<div class="videogames-list-container">
+  <div *ngIf="filteredGames.length > 0; else loading" class="games-grid">
+    <div *ngFor="let game of filteredGames" class="game-card">
+      <h3>{{ game.nombre }}</h3>
+      <p>Tipo: {{ game.tipo }}</p>
+      <p>Estado: {{ game.estado }}</p>
+      <p>Versión: {{ game.version }}</p>
+      <p>Calificación: {{ getCalificacion(game) !== null ? getCalificacion(game) : 'Sin reseña' }}</p>
+      <div class="card-actions">
+        <button (click)="selectGame(game)">Editar</button>
+        <app-videogames-delete [id]="game.id" *ngIf="!selectedGame || selectedGame.id !== game.id"></app-videogames-delete>
+      </div>
+    </div>
+  </div>
+  <ng-template #loading>Cargando...</ng-template>
+
+  <div *ngIf="selectedGame" class="edit-panel">
+    <app-videogames-edit [game]="selectedGame" (ngSubmit)="clearSelection()" (cancelEdit)="clearSelection()"></app-videogames-edit>
+  </div>
+</div>

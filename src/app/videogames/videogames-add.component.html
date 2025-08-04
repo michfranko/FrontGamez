@@ -1,0 +1,23 @@
+<div class="videogames-add-container">
+  <h2>Agregar Videojuego</h2>
+  <form (ngSubmit)="addVideogame()" #form="ngForm">
+    <label>Nombre:</label>
+    <input name="nombre" [(ngModel)]="game.nombre" placeholder="Nombre" required />
+    <label>Tipo de juego:</label>
+    <input name="tipo" [(ngModel)]="game.tipo" placeholder="Tipo de juego" required />
+    <label>Estado:</label>
+    <select name="estado" [(ngModel)]="game.estado" required>
+      <option value="" disabled selected>Selecciona estado</option>
+      <option value="terminado">Terminado</option>
+      <option value="jugando">Jugando</option>
+      <option value="pendiente">Pendiente</option>
+    </select>
+    <label>Versión:</label>
+    <select name="version" [(ngModel)]="game.version" required>
+      <option value="" disabled selected>Selecciona versión</option>
+      <option value="digital">Digital</option>
+      <option value="fisico">Físico</option>
+    </select>
+    <button type="submit" [disabled]="!game.nombre || !game.tipo || !game.estado || !game.version">Agregar</button>
+  </form>
+</div>

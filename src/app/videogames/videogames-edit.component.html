@@ -1,0 +1,17 @@
+<h2>Editar Videojuego</h2>
+<form *ngIf="game" (ngSubmit)="editVideogame()" #form="ngForm">
+  <input name="nombre" [(ngModel)]="game.nombre" placeholder="Nombre" required />
+  <input name="tipo" [(ngModel)]="game.tipo" placeholder="Tipo de juego" required />
+  <select name="estado" [(ngModel)]="game.estado" required>
+    <option value="terminado">Terminado</option>
+    <option value="jugando">Jugando</option>
+    <option value="pendiente">Pendiente</option>
+  </select>
+  <select name="version" [(ngModel)]="game.version" required>
+    <option value="digital">Digital</option>
+    <option value="fisico">Físico</option>
+  </select>
+  <!-- El campo de calificación se elimina, solo se edita desde la reseña -->
+  <button type="submit">Guardar Cambios</button>
+  <button type="button" (click)="cancelEdit()">Cancelar</button>
+</form>

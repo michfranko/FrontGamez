@@ -1,0 +1,213 @@
+.review-create-container {
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  width: 95vw;
+  max-width: 650px;
+  min-width: 350px;
+  min-height: 520px;
+  margin: 3rem auto;
+  padding: 2.8rem 2.8rem 2.2rem 2.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.review-create-container h2 {
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  color: #ff4081;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.review-create-container label {
+  font-weight: 700;
+  margin-top: 1.3rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 1.15rem;
+  color: #222;
+  letter-spacing: 0.5px;
+  text-align: left;
+  margin-left: 0.1rem;
+}
+.review-create-container select, .review-create-container input, .review-create-container textarea {
+  width: 100%;
+  padding: 1.1rem 1.2rem;
+  border-radius: 10px;
+  border: 1.5px solid #8d0a98;
+  margin-bottom: 1.1rem;
+  font-size: 1.13rem;
+  background: #fafafa;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+.review-create-container input:focus, .review-create-container select:focus, .review-create-container textarea:focus {
+  border: 1.5px solid #f5e1e8;
+  background: #fff;
+}
+.review-create-container textarea {
+  min-height: 180px;
+  max-height: 320px;
+  resize: vertical;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.review-create-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+}
+.char-count {
+  font-size: 1.05rem;
+  color: #c940ff;
+  margin-bottom: 1.2rem;
+  text-align: right;
+  width: 100%;
+  font-weight: 600;
+}
+.review-create-container button[type="submit"] {
+  background: linear-gradient(90deg, #9c15d6 60%, #dcbcff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  width: 100%;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(255,64,129,0.08);
+  letter-spacing: 0.5px;
+}
+.review-create-container button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(90deg, #ff80ab 0%, #ff4081 100%);
+  transform: translateY(-2px) scale(1.02);
+}
+.review-create-container button[type="submit"]:disabled {
+  background: #ccc;
+  color: #fff;
+  cursor: not-allowed;
+}
+.review-create-container select {
+  font-weight: 600;
+  color: #ff4081;
+  background: #fff0fa;
+  border: 1.5px solid #ff80ab;
+}
+.review-create-container select option {
+  color: #222;
+  font-weight: 500;
+}
+.review-create-container h2 {
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  color: var(--color-dominante);
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.review-create-container label {
+  font-weight: 700;
+  margin-top: 1.3rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  font-size: 1.15rem;
+  color: var(--color-negro);
+  letter-spacing: 0.5px;
+  text-align: left;
+  margin-left: 0.1rem;
+}
+.review-create-container select, .review-create-container input, .review-create-container textarea {
+  width: 100%;
+  padding: 1.1rem 1.2rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-gris-claro);
+  margin-bottom: 1.1rem;
+  font-size: 1.13rem;
+  background: var(--color-blanco);
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+.review-create-container select:focus, .review-create-container input:focus, .review-create-container textarea:focus {
+  border: 1.5px solid var(--color-dominante);
+  background: #fff;
+}
+.review-create-container textarea {
+  min-height: 180px;
+  max-height: 320px;
+  resize: vertical;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.review-create-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+}
+.char-count {
+  font-size: 1.05rem;
+  color: var(--color-naranja);
+  margin-bottom: 1.2rem;
+  text-align: right;
+  width: 100%;
+  font-weight: 600;
+}
+button[type="submit"] {
+  background: linear-gradient(90deg, var(--color-dominante) 60%, var(--color-naranja) 100%);
+  color: var(--color-blanco);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  width: 100%;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(124,58,237,0.08);
+  letter-spacing: 0.5px;
+}
+button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(90deg, var(--color-naranja) 0%, var(--color-dominante) 100%);
+  transform: translateY(-2px) scale(1.02);
+}
+button[type="submit"]:disabled {
+  background: var(--color-gris-claro);
+  color: var(--color-blanco);
+  cursor: not-allowed;
+}
+.review-create-container select {
+  font-weight: 600;
+  color: var(--color-verde-neon);
+  background: #fff0fa;
+  border: 1.5px solid var(--color-dominante);
+}
+.review-create-container select option {
+  color: var(--color-negro);
+  font-weight: 500;
+}
+.review-create-container textarea {
+  min-height: 180px;
+  max-height: 320px;
+  resize: vertical;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.review-create-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+}
+.review-create-container label {
+  text-align: left;
+  margin-left: 0.1rem;
+}
