@@ -11,6 +11,7 @@
     <option value="version-digital">Solo versión digital</option>
     <option value="version-fisico">Solo versión físico</option>
   </select>
+  <div class="games-count-badge">{{ filteredGames.length }}</div>
 </div>
 <div class="videogames-list-container">
   <div *ngIf="filteredGames.length > 0; else loading" class="games-grid">
