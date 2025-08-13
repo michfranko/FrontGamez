@@ -14,9 +14,15 @@ export class VideogamesDeleteComponent {
   constructor(private firestore: Firestore) {}
   async deleteVideogame() {
     if (!this.id) return;
+    // Eliminar reseña si existe
+    const reviewRef = doc(this.firestore, `videogames/${this.id}/review/data`);
+    try {
+      await deleteDoc(reviewRef);
+    } catch {}
+    // Eliminar videojuego
     const ref = doc(this.firestore, `videogames/${this.id}`);
     await deleteDoc(ref);
-    alert('Videojuego eliminado');
+    alert('Videojuego y reseña eliminados');
   }
 
   confirmDelete() {

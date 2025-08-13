@@ -5,8 +5,28 @@
   <div *ngIf="filteredReviews.length > 0; else noReviews">
     <div *ngFor="let review of filteredReviews" class="review-card">
       <h3>{{ review.nombre }}</h3>
-      <div class="review-rating">Calificación: <b>{{ review.calificacion }}</b></div>
-      <div class="review-text">{{ review.texto }}</div>
+      <div>
+        <div class="review-rating">Calificación: <b>{{ review.calificacion }}</b></div>
+        <div class="review-text">{{ review.texto }}</div>
+        <button (click)="startEdit(review)" class="edit-btn">Editar</button>
+      </div>
+    </div>
+
+    <!-- Modal flotante para edición -->
+    <div class="modal-overlay" *ngIf="editReviewId">
+      <div class="modal-content">
+        <h3>Editar Reseña</h3>
+        <form (ngSubmit)="saveEdit()" class="edit-form">
+          <label>Calificación:</label>
+          <input type="number" [(ngModel)]="editReview.calificacion" name="editCalificacion" min="0" max="10" required />
+          <label>Reseña:</label>
+          <textarea [(ngModel)]="editReview.texto" name="editTexto" maxlength="300" required></textarea>
+          <div class="modal-actions">
+            <button type="submit" class="save-btn">Guardar</button>
+            <button type="button" (click)="cancelEdit()" class="cancel-btn">Cancelar</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
   <ng-template #noReviews>

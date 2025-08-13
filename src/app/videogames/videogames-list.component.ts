@@ -32,15 +32,15 @@ export class VideogamesListComponent {
   }
 
   async loadReviews() {
-    // Cargar reseñas para todos los juegos
+    // Cargar reseñas para todos los juegos en paralelo
     const reviewsMap: { [gameId: string]: any } = {};
-    for (const game of this.allGames) {
+    await Promise.all(this.allGames.map(async (game) => {
       const reviewRef = doc(this.firestore, `videogames/${game.id}/review/data`);
       const reviewSnap = await getDoc(reviewRef);
       if (reviewSnap.exists()) {
         reviewsMap[game.id] = reviewSnap.data();
       }
-    }
+    }));
     this.reviewsMap = reviewsMap;
     this.filterGames();
   }

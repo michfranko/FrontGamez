@@ -3,7 +3,7 @@
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  background: #fff;
+  background: rgba(255,255,255,0.85);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   max-width: 400px;
   margin-left: auto;
