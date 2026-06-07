@@ -1,0 +1,67 @@
+<section class="dashboard-welcome">
+  <div class="dashboard-header">
+    <div>
+      <div class="eyebrow">Tu biblioteca inteligente</div>
+      <h1>Bienvenido a tu gestor de videojuegos</h1>
+      <p>
+        Aquí tienes estadísticas relevantes, recomendaciones y alertas que te ayudan a decidir qué jugar ahora.
+      </p>
+    </div>
+    <div class="hero-badge">
+      <span>Calificación media</span>
+      <strong>{{ averageRating || '—' }}</strong>
+    </div>
+  </div>
+
+  <div class="alerts-row">
+    <div class="alert-card info">
+      <span>Tienes</span>
+      <strong>{{ pendingCount }}</strong>
+      <span>juegos pendientes</span>
+    </div>
+    <div class="alert-card warning">
+      <span>Último juego completado hace</span>
+      <strong>{{ daysSinceLastCompletion !== null ? daysSinceLastCompletion + ' días' : 'aún no' }}</strong>
+    </div>
+    <div class="alert-card success">
+      <span>Tu género favorito</span>
+      <strong>{{ favoriteGenre }}</strong>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <article class="metric-card">
+      <div class="metric-title">Total de juegos</div>
+      <div class="metric-value">{{ totalGames }}</div>
+    </article>
+    <article class="metric-card">
+      <div class="metric-title">Completados</div>
+      <div class="metric-value">{{ completedCount }}</div>
+    </article>
+    <article class="metric-card">
+      <div class="metric-title">Plataforma más común</div>
+      <div class="metric-value">{{ favoritePlatform }}</div>
+    </article>
+    <article class="metric-card">
+      <div class="metric-title">Mejor año según tus puntuaciones</div>
+      <div class="metric-value">{{ bestYear }}</div>
+    </article>
+  </div>
+
+  <div class="insights-grid">
+    <section class="insight-card">
+      <h2>Recomendaciones</h2>
+      <ul>
+        <li>📌 Siguiente pendiente más antiguo: <strong>{{ getOldestPendingLabel() }}</strong></li>
+        <li>⭐ Mejor pendiente valorado: <strong>{{ top5Games.length ? top5Games[0].nombre : 'No hay pendientes' }}</strong></li>
+        <li>🎯 Calificación promedio: <strong>{{ averageRating || 'N/A' }}</strong></li>
+      </ul>
+    </section>
+    <section class="insight-card">
+      <h2>Top 5 personal</h2>
+      <ol>
+        <li *ngFor="let game of top5Games">{{ game.nombre }} — {{ game.calificacion }}</li>
+      </ol>
+    </section>
+  </div>
+</section>

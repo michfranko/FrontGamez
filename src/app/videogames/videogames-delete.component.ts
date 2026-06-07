@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Firestore, doc, deleteDoc } from '@angular/fire/firestore';
 
@@ -11,7 +11,8 @@ import { Firestore, doc, deleteDoc } from '@angular/fire/firestore';
 })
 export class VideogamesDeleteComponent {
   @Input() id: string = '';
-  constructor(private firestore: Firestore) {}
+  private firestore = inject(Firestore);
+  constructor() {}
   async deleteVideogame() {
     if (!this.id) return;
     // Eliminar reseña si existe

@@ -1,8 +1,6 @@
-﻿import {Component, OnInit, inject} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { RouterModule } from '@angular/router';
-import { DashboardMenuComponent } from './dashboard-menu/dashboard-menu.component';
 
 interface Videogame {
   id?: string;
@@ -19,13 +17,13 @@ interface Videogame {
 }
 
 @Component({
-  selector: 'app-welcome',
+  selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, DashboardMenuComponent],
-  templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.css']
+  imports: [CommonModule],
+  templateUrl: './dashboard-home.component.html',
+  styleUrls: ['./dashboard-home.component.css']
 })
-export class WelcomeComponent implements OnInit {
+export class DashboardHomeComponent implements OnInit {
   games: Videogame[] = [];
   totalGames = 0;
   completedCount = 0;
@@ -43,7 +41,6 @@ export class WelcomeComponent implements OnInit {
   bestYear = 'N/A';
 
   private firestore = inject(Firestore);
-  constructor() {}
 
   ngOnInit() {
     const ref = collection(this.firestore, 'videogames');
@@ -57,35 +54,28 @@ export class WelcomeComponent implements OnInit {
     this.totalGames = this.games.length;
     this.completedCount = this.games.filter((game) => game.estado === 'terminado').length;
     this.pendingCount = this.games.filter((game) => game.estado === 'pendiente').length;
-
     const ratings = this.games
       .map((game) => Number(game.calificacion))
       .filter((value) => !isNaN(value));
-
     this.averageRating = ratings.length ? this.round(ratings.reduce((sum, value) => sum + value, 0) / ratings.length, 1) : 0;
     this.favoritePlatform = this.getTopField('plataforma');
     this.favoriteGenre = this.getTopField('tipo');
-
     this.top5Games = [...this.games]
       .filter((game) => typeof game.calificacion !== 'undefined' && game.calificacion !== null)
       .sort((a, b) => Number(b.calificacion) - Number(a.calificacion))
       .slice(0, 5);
-
     this.oldestPending = [...this.games]
       .filter((game) => game.estado === 'pendiente')
       .sort((a, b) => (this.parseDate(a.fechaIncorporacion)?.getTime() ?? Infinity) - (this.parseDate(b.fechaIncorporacion)?.getTime() ?? Infinity))[0] || null;
     this.pendingOldestDays = this.oldestPending ? this.daysBetween(this.parseDate(this.oldestPending.fechaIncorporacion) ?? new Date(), new Date()) : null;
-
     this.stateMostFrequent = this.getTopField('estado');
     this.averageByGenre = this.computeAverageRatingByGenre();
     this.recommendations = this.buildRecommendations();
-
     const completedDates = this.games
       .filter((game) => game.estado === 'terminado' && game.fechaFinalizacion)
       .map((game) => this.parseDate(game.fechaFinalizacion))
       .filter((date): date is Date => !!date)
       .sort((a, b) => b.getTime() - a.getTime());
-
     this.daysSinceLastCompletion = completedDates.length ? this.daysBetween(completedDates[0], new Date()) : null;
     this.bestYear = this.computeBestYear();
   }
@@ -149,7 +139,6 @@ export class WelcomeComponent implements OnInit {
       }))
       .sort((a, b) => a.days - b.days)[0]?.game || null;
     const randomGame = this.games.length ? this.games[Math.floor(Math.random() * this.games.length)] : null;
-
     return [
       {
         title: 'Pendiente más antiguo',

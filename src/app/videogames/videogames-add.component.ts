@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class VideogamesAddComponent {
   game: any = {};
-  constructor(private firestore: Firestore) {}
+  private firestore = inject(Firestore);
+  constructor() {}
   async addVideogame() {
     // No guardar calificacion aquí
     const { calificacion, ...gameData } = this.game;

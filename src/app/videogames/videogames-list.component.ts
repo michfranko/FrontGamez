@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Firestore, collectionData, collection, doc, getDoc } from '@angular/fire/firestore';
@@ -22,8 +22,9 @@ export class VideogamesListComponent {
   selectedGame: any = null;
   reviewsMap: { [gameId: string]: any } = {};
 
-  constructor(private firestore: Firestore) {
-    const ref = collection(firestore, 'videogames');
+  private firestore = inject(Firestore);
+  constructor() {
+    const ref = collection(this.firestore, 'videogames');
     this.videogames$ = collectionData(ref, { idField: 'id' });
     this.videogames$.subscribe(games => {
       this.allGames = games;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Firestore, collection, collectionData, doc, setDoc, getDoc } from '@angular/fire/firestore';
@@ -16,7 +16,8 @@ export class ReviewCreateComponent implements OnInit {
   selectedGameId: string = '';
   review = { calificacion: '', texto: '' };
 
-  constructor(private firestore: Firestore) {}
+  private firestore = inject(Firestore);
+  constructor() {}
 
   async ngOnInit() {
     const ref = collection(this.firestore, 'videogames');

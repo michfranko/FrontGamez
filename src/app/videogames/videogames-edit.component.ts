@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class VideogamesEditComponent {
   @Input() game: any;
-  constructor(private firestore: Firestore) {}
+  private firestore = inject(Firestore);
+  constructor() {}
   async editVideogame() {
     if (!this.game?.id) return;
     // No permitir editar calificacion aquí
