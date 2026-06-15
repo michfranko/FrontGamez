@@ -1,9 +1,42 @@
 <nav class="sidebar">
+  <div class="brand">
+    <span class="material-symbols-outlined logo-icon">stadia_controller</span>
+    <div class="brand-text">
+      <h2>FrontGamez</h2>
+      <span>Gaming Vault</span>
+    </div>
+  </div>
   <ul>
-    <li><a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Dashboard</a></li>
-    <li><a routerLink="/dashboard/videogames/list" routerLinkActive="active">Listar Videojuegos</a></li>
-    <li><a routerLink="/dashboard/videogames/add" routerLinkActive="active">Agregar Videojuego</a></li>
-    <li><a routerLink="/dashboard/reviews/create" routerLinkActive="active">Crear Reseña</a></li>
-    <li><a routerLink="/dashboard/reviews/read" routerLinkActive="active">Ver Reseñas</a></li>
+    <li>
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <span class="material-symbols-outlined nav-icon">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dashboard/videogames/list" routerLinkActive="active">
+        <span class="material-symbols-outlined nav-icon">sports_esports</span>
+        <span>Mis Videojuegos</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dashboard/videogames/add" routerLinkActive="active">
+        <span class="material-symbols-outlined nav-icon">library_add</span>
+        <span>Agregar Juego</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dashboard/reviews/create" routerLinkActive="active">
+        <span class="material-symbols-outlined nav-icon">rate_review</span>
+        <span>Crear Reseña</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dashboard/reviews/read" routerLinkActive="active">
+        <span class="material-symbols-outlined nav-icon">reviews</span>
+        <span>Ver Reseñas</span>
+      </a>
+    </li>
   </ul>
 </nav>
+

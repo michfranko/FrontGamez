@@ -1,35 +1,107 @@
-<h2>Lista de Videojuegos</h2>
-<div class="search-sort-bar">
-  <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (ngModelChange)="filterGames()" />
-  <select [(ngModel)]="sortOption" (change)="filterGames()">
-    <option value="">Ordenar por...</option>
-    <option value="calificacion-desc">Calificación más alta</option>
-    <option value="calificacion-asc">Calificación más baja</option>
-    <option value="estado-terminado">Solo terminados</option>
-    <option value="estado-jugando">Solo jugando</option>
-    <option value="estado-pendiente">Solo pendientes</option>
-    <option value="version-digital">Solo versión digital</option>
-    <option value="version-fisico">Solo versión físico</option>
-  </select>
-  <div class="games-count-badge">{{ filteredGames.length }}</div>
+<div class="list-header-row">
+  <h2>Mis Videojuegos</h2>
+  <span class="subtitle-desc">Gestiona, filtra y califica tu colección personal</span>
 </div>
+
+<!-- Barra de Búsqueda y Filtros -->
+<div class="search-sort-bar">
+  <div class="search-input-wrapper">
+    <span class="material-symbols-outlined search-icon">search</span>
+    <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (ngModelChange)="filterGames()" />
+  </div>
+  
+  <div class="select-wrapper">
+    <span class="material-symbols-outlined filter-icon">filter_alt</span>
+    <select [(ngModel)]="sortOption" (change)="filterGames()">
+      <option value="">Filtrar u ordenar por...</option>
+      <option value="calificacion-desc">Calificación más alta</option>
+      <option value="calificacion-asc">Calificación más baja</option>
+      <option value="estado-terminado">Solo Terminados</option>
+      <option value="estado-jugando">Solo Jugando</option>
+      <option value="estado-pendiente">Solo Pendientes</option>
+      <option value="version-digital">Solo Digitales</option>
+      <option value="version-fisico">Solo Físicos</option>
+    </select>
+  </div>
+  
+  <div class="games-count-badge">
+    <span class="badge-label">Juegos:</span>
+    <span class="badge-count">{{ filteredGames.length }}</span>
+  </div>
+</div>
+
+<!-- Contenedor Principal (Grid + Panel de Edición) -->
 <div class="videogames-list-container">
-  <div *ngIf="filteredGames.length > 0; else loading" class="games-grid">
-    <div *ngFor="let game of filteredGames" class="game-card">
-      <h3>{{ game.nombre }}</h3>
-      <p>Tipo: {{ game.tipo }}</p>
-      <p>Estado: {{ game.estado }}</p>
-      <p>Versión: {{ game.version }}</p>
-      <p>Calificación: {{ getCalificacion(game) !== null ? getCalificacion(game) : 'Sin reseña' }}</p>
+  <div *ngIf="filteredGames.length > 0; else noGamesOrLoading" class="games-grid">
+    <div *ngFor="let game of filteredGames" class="game-card" [class.active-card]="selectedGame?.id === game.id">
+      
+      <!-- Detalle Superior (Plataforma y Versión) -->
+      <div class="card-meta-header">
+        <span class="platform-badge" [attr.data-platform]="(game.plataforma || 'other') | lowercase">
+          {{ game.plataforma || 'Consola' }}
+        </span>
+        <span class="version-badge">
+          <span class="material-symbols-outlined version-icon">
+            {{ game.version === 'digital' ? 'download' : 'album' }}
+          </span>
+          <span>{{ game.version }}</span>
+        </span>
+      </div>
+
+      <!-- Título y Tipo -->
+      <div class="card-title-section">
+        <h3>{{ game.nombre }}</h3>
+        <span class="genre-tag">{{ game.tipo }}</span>
+      </div>
+
+      <!-- Detalles del Juego (Estado y Calificación) -->
+      <div class="card-stats-section">
+        <div class="stat-row">
+          <span class="stat-label">Estado:</span>
+          <span class="status-pill" [attr.data-status]="game.estado">
+            {{ game.estado }}
+          </span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Calificación:</span>
+          <span class="rating-value" [class.no-rating]="getCalificacion(game) === null">
+            <span class="material-symbols-outlined rating-star">grade</span>
+            <strong>{{ getCalificacion(game) !== null ? getCalificacion(game) : '—' }}</strong>
+          </span>
+        </div>
+      </div>
+
+      <!-- Acciones de Tarjeta -->
       <div class="card-actions">
-        <button (click)="selectGame(game)">Editar</button>
+        <button (click)="selectGame(game)" class="btn-edit" title="Editar Videojuego">
+          <span class="material-symbols-outlined">edit</span>
+          <span>Editar</span>
+        </button>
         <app-videogames-delete [id]="game.id" *ngIf="!selectedGame || selectedGame.id !== game.id"></app-videogames-delete>
       </div>
     </div>
   </div>
-  <ng-template #loading>Cargando...</ng-template>
 
+  <ng-template #noGamesOrLoading>
+    <div class="no-games-box">
+      <span class="material-symbols-outlined box-icon">sports_esports</span>
+      <p *ngIf="allGames.length > 0; else emptyDb">No se encontraron videojuegos con los filtros seleccionados.</p>
+      <ng-template #emptyDb>
+        <p>No tienes juegos en tu biblioteca. ¡Agrega tu primer videojuego!</p>
+      </ng-template>
+    </div>
+  </ng-template>
+
+  <!-- Panel Flotante de Edición -->
   <div *ngIf="selectedGame" class="edit-panel">
+    <div class="panel-header">
+      <span class="material-symbols-outlined">edit_note</span>
+      <h3>Modificar Juego</h3>
+      <button class="close-panel-btn" (click)="clearSelection()" title="Cerrar panel">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
     <app-videogames-edit [game]="selectedGame" (ngSubmit)="clearSelection()" (cancelEdit)="clearSelection()"></app-videogames-edit>
   </div>
 </div>
+

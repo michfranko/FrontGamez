@@ -1,23 +1,55 @@
 <div class="videogames-add-container">
   <h2>Agregar Videojuego</h2>
+  
   <form (ngSubmit)="addVideogame()" #form="ngForm">
-    <label>Nombre:</label>
-    <input name="nombre" [(ngModel)]="game.nombre" placeholder="Nombre" required />
-    <label>Tipo de juego:</label>
-    <input name="tipo" [(ngModel)]="game.tipo" placeholder="Tipo de juego" required />
-    <label>Estado:</label>
-    <select name="estado" [(ngModel)]="game.estado" required>
-      <option value="" disabled selected>Selecciona estado</option>
-      <option value="terminado">Terminado</option>
-      <option value="jugando">Jugando</option>
-      <option value="pendiente">Pendiente</option>
-    </select>
-    <label>Versión:</label>
-    <select name="version" [(ngModel)]="game.version" required>
-      <option value="" disabled selected>Selecciona versión</option>
-      <option value="digital">Digital</option>
-      <option value="fisico">Físico</option>
-    </select>
-    <button type="submit" [disabled]="!game.nombre || !game.tipo || !game.estado || !game.version">Agregar</button>
+    <div class="form-group">
+      <label for="nombre">Nombre del videojuego</label>
+      <input id="nombre" name="nombre" [(ngModel)]="game.nombre" placeholder="Ej: Zelda: Breath of the Wild" required />
+    </div>
+
+    <div class="form-group">
+      <label for="tipo">Género / Tipo</label>
+      <input id="tipo" name="tipo" [(ngModel)]="game.tipo" placeholder="Ej: Acción / Aventura" required />
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="plataforma">Plataforma</label>
+        <select id="plataforma" name="plataforma" [(ngModel)]="game.plataforma" required>
+          <option value="" disabled selected>Selecciona plataforma</option>
+          <option value="PC">PC</option>
+          <option value="PlayStation">PlayStation</option>
+          <option value="Xbox">Xbox</option>
+          <option value="Nintendo Switch">Nintendo Switch</option>
+          <option value="Móvil">Móvil</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="estado">Estado de juego</label>
+        <select id="estado" name="estado" [(ngModel)]="game.estado" required>
+          <option value="" disabled selected>Selecciona estado</option>
+          <option value="terminado">Terminado</option>
+          <option value="jugando">Jugando</option>
+          <option value="pendiente">Pendiente</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="version">Formato / Versión</label>
+      <select id="version" name="version" [(ngModel)]="game.version" required>
+        <option value="" disabled selected>Selecciona versión</option>
+        <option value="digital">Digital</option>
+        <option value="fisico">Físico</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn-submit" [disabled]="!game.nombre || !game.tipo || !game.plataforma || !game.estado || !game.version">
+      <span class="material-symbols-outlined btn-icon">add_circle</span>
+      <span>Agregar a la Colección</span>
+    </button>
   </form>
 </div>
+

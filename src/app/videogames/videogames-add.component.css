@@ -1,76 +1,138 @@
+.videogames-add-container {
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+}
 
 .videogames-add-container h2 {
-  margin-bottom: 2rem;
-  font-size: 2.2rem;
-  color: #75049e;
-  font-weight: 900;
-  letter-spacing: 1px;
+  font-size: 1.8rem;
+  font-weight: 800;
   text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #fff 40%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
-.videogames-add-container label {
-  font-weight: 700;
-  margin-top: 1.3rem;
-  margin-bottom: 0.5rem;
-  display: block;
-  font-size: 1.15rem;
-  color: #fff;
-  letter-spacing: 0.5px;
-  text-align: left;
-  margin-left: 0.1rem;
-}
-.videogames-add-container form {
-  width: 100%;
+
+/* Grupos de Formulario */
+.form-group {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 0.2rem;
-}
-.videogames-add-container input, .videogames-add-container select {
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
   width: 100%;
-  padding: 1.1rem 1.2rem;
-  border-radius: 10px;
-  border: 1.5px solid #ccc;
-  margin-bottom: 1.1rem;
-  font-size: 1.13rem;
-  background: #fafafa;
-  transition: border 0.2s;
-  box-sizing: border-box;
 }
-.videogames-add-container input:focus, .videogames-add-container select:focus {
-  border: 1.5px solid #b512c7;
-  background: #fff;
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
 }
-.videogames-add-container select {
+
+.videogames-add-container label {
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #a21db9;
-  background: #f1edf1;
-  border: 1.5px solid #5d0ba0;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
+
+/* Entradas y Selectores */
+.videogames-add-container input,
+.videogames-add-container select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.videogames-add-container input::placeholder {
+  color: var(--text-muted);
+}
+
+.videogames-add-container select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.5rem;
+  padding-right: 2.5rem;
+}
+
 .videogames-add-container select option {
-  color: #222;
-  font-weight: 500;
+  background-color: var(--bg-dark);
+  color: #fff;
 }
-.videogames-add-container button[type="submit"] {
-  background: linear-gradient(90deg, #ff4081 60%, #ff80ab 100%);
+
+/* Enfoque / Focus */
+.videogames-add-container input:focus,
+.videogames-add-container select:focus {
+  border-color: var(--primary);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Botón de Enviar */
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  font-size: 1.25rem;
-  font-weight: bold;
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
   margin-top: 1.5rem;
   width: 100%;
-  transition: background 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px rgba(255,64,129,0.08);
-  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px var(--primary-glow);
+  transition: var(--transition-smooth);
 }
-.videogames-add-container button[type="submit"]:hover:not(:disabled) {
-  background: linear-gradient(90deg, #ff80ab 0%, #ff4081 100%);
-  transform: translateY(-2px) scale(1.02);
+
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 77, 255, 0.5);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
 }
-.videogames-add-container button[type="submit"]:disabled {
-  background: #ccc;
-  color: #fff;
+
+.btn-submit:disabled {
+  background: var(--text-muted);
+  color: var(--text-secondary);
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.5;
 }
+
+.btn-icon {
+  font-size: 1.25rem;
+}
+
+/* Responsividad */
+@media (max-width: 580px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .videogames-add-container {
+    padding: 1.5rem;
+  }
+}
+

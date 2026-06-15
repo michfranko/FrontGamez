@@ -1,67 +1,138 @@
 <section class="dashboard-welcome">
+  <!-- Cabecera de Bienvenida -->
   <div class="dashboard-header">
-    <div>
+    <div class="header-main">
       <div class="eyebrow">Tu biblioteca inteligente</div>
       <h1>Bienvenido a tu gestor de videojuegos</h1>
       <p>
-        Aquí tienes estadísticas relevantes, recomendaciones y alertas que te ayudan a decidir qué jugar ahora.
+        Aquí tienes estadísticas relevantes, recomendaciones inteligentes y alertas que te ayudan a decidir qué jugar ahora.
       </p>
     </div>
     <div class="hero-badge">
-      <span>Calificación media</span>
-      <strong>{{ averageRating || '—' }}</strong>
+      <span class="material-symbols-outlined badge-icon">grade</span>
+      <div class="badge-text">
+        <span>Calificación Media</span>
+        <strong>{{ averageRating || '—' }}</strong>
+      </div>
     </div>
   </div>
 
+  <!-- Fila de Alertas Rápidas -->
   <div class="alerts-row">
     <div class="alert-card info">
-      <span>Tienes</span>
-      <strong>{{ pendingCount }}</strong>
-      <span>juegos pendientes</span>
+      <span class="material-symbols-outlined alert-icon">pending_actions</span>
+      <div class="alert-content">
+        <span>Tienes</span>
+        <strong>{{ pendingCount }}</strong>
+        <span>juegos pendientes</span>
+      </div>
     </div>
     <div class="alert-card warning">
-      <span>Último juego completado hace</span>
-      <strong>{{ daysSinceLastCompletion !== null ? daysSinceLastCompletion + ' días' : 'aún no' }}</strong>
+      <span class="material-symbols-outlined alert-icon">history</span>
+      <div class="alert-content">
+        <span>Último completado</span>
+        <strong>{{ daysSinceLastCompletion !== null ? daysSinceLastCompletion + ' días' : 'aún no' }}</strong>
+        <span>de inactividad</span>
+      </div>
     </div>
     <div class="alert-card success">
-      <span>Tu género favorito</span>
-      <strong>{{ favoriteGenre }}</strong>
+      <span class="material-symbols-outlined alert-icon">favorite</span>
+      <div class="alert-content">
+        <span>Género favorito</span>
+        <strong>{{ favoriteGenre }}</strong>
+        <span>según tus títulos</span>
+      </div>
     </div>
   </div>
 
+  <!-- Rejilla de Métricas Principales -->
   <div class="metrics-grid">
     <article class="metric-card">
-      <div class="metric-title">Total de juegos</div>
+      <div class="metric-header">
+        <span class="material-symbols-outlined metric-icon">sports_esports</span>
+        <div class="metric-title">Total Juegos</div>
+      </div>
       <div class="metric-value">{{ totalGames }}</div>
     </article>
     <article class="metric-card">
-      <div class="metric-title">Completados</div>
+      <div class="metric-header">
+        <span class="material-symbols-outlined metric-icon completed">emoji_events</span>
+        <div class="metric-title">Completados</div>
+      </div>
       <div class="metric-value">{{ completedCount }}</div>
     </article>
     <article class="metric-card">
-      <div class="metric-title">Plataforma más común</div>
+      <div class="metric-header">
+        <span class="material-symbols-outlined metric-icon platform">gamepad</span>
+        <div class="metric-title">Plataforma Favorita</div>
+      </div>
       <div class="metric-value">{{ favoritePlatform }}</div>
     </article>
     <article class="metric-card">
-      <div class="metric-title">Mejor año según tus puntuaciones</div>
+      <div class="metric-header">
+        <span class="material-symbols-outlined metric-icon year">calendar_month</span>
+        <div class="metric-title">Mejor Año</div>
+      </div>
       <div class="metric-value">{{ bestYear }}</div>
     </article>
   </div>
 
+  <!-- Recomendaciones y Top Personal -->
   <div class="insights-grid">
-    <section class="insight-card">
-      <h2>Recomendaciones</h2>
-      <ul>
-        <li>📌 Siguiente pendiente más antiguo: <strong>{{ getOldestPendingLabel() }}</strong></li>
-        <li>⭐ Mejor pendiente valorado: <strong>{{ top5Games.length ? top5Games[0].nombre : 'No hay pendientes' }}</strong></li>
-        <li>🎯 Calificación promedio: <strong>{{ averageRating || 'N/A' }}</strong></li>
-      </ul>
+    <section class="insight-card recommendations">
+      <div class="card-title-row">
+        <span class="material-symbols-outlined title-icon">smart_toy</span>
+        <h2>Recomendaciones Inteligentes</h2>
+      </div>
+      <div class="recommendation-list">
+        <div class="rec-item">
+          <span class="material-symbols-outlined rec-icon pin">push_pin</span>
+          <div class="rec-text">
+            <span>Siguiente pendiente más antiguo</span>
+            <strong>{{ getOldestPendingLabel() }}</strong>
+          </div>
+        </div>
+        <div class="rec-item">
+          <span class="material-symbols-outlined rec-icon star">star</span>
+          <div class="rec-text">
+            <span>Juego pendiente mejor valorado</span>
+            <strong>{{ top5Games.length ? top5Games[0].nombre : 'No hay pendientes' }}</strong>
+          </div>
+        </div>
+        <div class="rec-item">
+          <span class="material-symbols-outlined rec-icon average">query_stats</span>
+          <div class="rec-text">
+            <span>Meta de calificación actual</span>
+            <strong>{{ averageRating || 'N/A' }} / 10</strong>
+          </div>
+        </div>
+      </div>
     </section>
-    <section class="insight-card">
-      <h2>Top 5 personal</h2>
-      <ol>
-        <li *ngFor="let game of top5Games">{{ game.nombre }} — {{ game.calificacion }}</li>
-      </ol>
+
+    <section class="insight-card top-games">
+      <div class="card-title-row">
+        <span class="material-symbols-outlined title-icon gold">workspace_premium</span>
+        <h2>Top 5 Personal</h2>
+      </div>
+      <ul class="top-list">
+        <li *ngFor="let game of top5Games; let i = index" class="top-item">
+          <div class="rank" [class.gold-rank]="i === 0" [class.silver-rank]="i === 1" [class.bronze-rank]="i === 2">
+            {{ i + 1 }}
+          </div>
+          <div class="game-info">
+            <span class="game-name">{{ game.nombre }}</span>
+            <span class="game-genre">{{ game.tipo }}</span>
+          </div>
+          <div class="game-rating">
+            <span class="material-symbols-outlined star-icon">grade</span>
+            <span>{{ game.calificacion }}</span>
+          </div>
+        </li>
+        <li *ngIf="top5Games.length === 0" class="no-data">
+          Agrega calificaciones para ver tu lista
+        </li>
+      </ul>
     </section>
   </div>
 </section>
+

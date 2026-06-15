@@ -1,213 +1,165 @@
 .review-create-container {
-  background: #fff;
-  border-radius: 32px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
-  width: 95vw;
-  max-width: 650px;
-  min-width: 350px;
-  min-height: 520px;
-  margin: 3rem auto;
-  padding: 2.8rem 2.8rem 2.2rem 2.8rem;
+  background: var(--bg-surface);
+  backdrop-filter: var(--glass-backdrop);
+  -webkit-backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+}
+
+.review-create-container h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #fff 40%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Grupos de Formulario */
+.review-create-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 1.25rem;
+}
+
+.review-create-container label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Entradas, selectores y textarea */
+.review-create-container select,
+.review-create-container input,
+.review-create-container textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.review-create-container input::placeholder,
+.review-create-container textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.review-create-container select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.5rem;
+  padding-right: 2.5rem;
+}
+
+.review-create-container select option {
+  background-color: var(--bg-dark);
+  color: #fff;
+}
+
+.review-create-container textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* Enfoque / Focus */
+.review-create-container input:focus,
+.review-create-container select:focus,
+.review-create-container textarea:focus {
+  border-color: var(--primary);
+  background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Contador de caracteres */
+.char-count {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: -0.5rem;
+}
+
+/* Botón de Enviar */
+.review-create-container button[type="submit"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  width: 100%;
+  box-shadow: 0 4px 15px var(--accent-glow);
+  transition: var(--transition-smooth);
+}
+
+.review-create-container button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 64, 129, 0.5);
+}
+
+.review-create-container button[type="submit"]:disabled {
+  background: var(--text-muted);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.5;
+}
+
+/* Estado Vacío */
+.review-create-container > div:not(form) {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-.review-create-container h2 {
-  margin-bottom: 2rem;
-  font-size: 2.2rem;
-  color: #ff4081;
-  font-weight: 900;
-  letter-spacing: 1px;
   text-align: center;
-}
-.review-create-container label {
-  font-weight: 700;
-  margin-top: 1.3rem;
-  margin-bottom: 0.5rem;
-  display: block;
-  font-size: 1.15rem;
-  color: #222;
-  letter-spacing: 0.5px;
-  text-align: left;
-  margin-left: 0.1rem;
-}
-.review-create-container select, .review-create-container input, .review-create-container textarea {
-  width: 100%;
-  padding: 1.1rem 1.2rem;
-  border-radius: 10px;
-  border: 1.5px solid #8d0a98;
-  margin-bottom: 1.1rem;
-  font-size: 1.13rem;
-  background: #fafafa;
-  transition: border 0.2s;
-  box-sizing: border-box;
-}
-.review-create-container input:focus, .review-create-container select:focus, .review-create-container textarea:focus {
-  border: 1.5px solid #f5e1e8;
-  background: #fff;
-}
-.review-create-container textarea {
-  min-height: 180px;
-  max-height: 320px;
-  resize: vertical;
-  font-size: 1.15rem;
-  line-height: 1.5;
-}
-.review-create-container form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.2rem;
-}
-.char-count {
+  color: var(--text-secondary);
+  padding: 3rem 1rem;
   font-size: 1.05rem;
-  color: #c940ff;
-  margin-bottom: 1.2rem;
-  text-align: right;
-  width: 100%;
-  font-weight: 600;
 }
-.review-create-container button[type="submit"] {
-  background: linear-gradient(90deg, #9c15d6 60%, #dcbcff 100%);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 1.5rem;
-  width: 100%;
-  transition: background 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px rgba(255,64,129,0.08);
-  letter-spacing: 0.5px;
+
+@media (max-width: 580px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .review-create-container {
+    padding: 1.5rem;
+  }
 }
-.review-create-container button[type="submit"]:hover:not(:disabled) {
-  background: linear-gradient(90deg, #ff80ab 0%, #ff4081 100%);
-  transform: translateY(-2px) scale(1.02);
-}
-.review-create-container button[type="submit"]:disabled {
-  background: #ccc;
-  color: #fff;
-  cursor: not-allowed;
-}
-.review-create-container select {
-  font-weight: 600;
-  color: #ff4081;
-  background: #fff0fa;
-  border: 1.5px solid #ff80ab;
-}
-.review-create-container select option {
-  color: #222;
-  font-weight: 500;
-}
-.review-create-container h2 {
-  margin-bottom: 2rem;
-  font-size: 2.2rem;
-  color: var(--color-dominante);
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-align: center;
-}
-.review-create-container label {
-  font-weight: 700;
-  margin-top: 1.3rem;
-  margin-bottom: 0.5rem;
-  display: block;
-  font-size: 1.15rem;
-  color: var(--color-negro);
-  letter-spacing: 0.5px;
-  text-align: left;
-  margin-left: 0.1rem;
-}
-.review-create-container select, .review-create-container input, .review-create-container textarea {
-  width: 100%;
-  padding: 1.1rem 1.2rem;
-  border-radius: 10px;
-  border: 1.5px solid var(--color-gris-claro);
-  margin-bottom: 1.1rem;
-  font-size: 1.13rem;
-  background: var(--color-blanco);
-  transition: border 0.2s;
-  box-sizing: border-box;
-}
-.review-create-container select:focus, .review-create-container input:focus, .review-create-container textarea:focus {
-  border: 1.5px solid var(--color-dominante);
-  background: #fff;
-}
-.review-create-container textarea {
-  min-height: 180px;
-  max-height: 320px;
-  resize: vertical;
-  font-size: 1.15rem;
-  line-height: 1.5;
-}
-.review-create-container form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.2rem;
-}
-.char-count {
-  font-size: 1.05rem;
-  color: var(--color-naranja);
-  margin-bottom: 1.2rem;
-  text-align: right;
-  width: 100%;
-  font-weight: 600;
-}
-button[type="submit"] {
-  background: linear-gradient(90deg, var(--color-dominante) 60%, var(--color-naranja) 100%);
-  color: var(--color-blanco);
-  border: none;
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  font-size: 1.25rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 1.5rem;
-  width: 100%;
-  transition: background 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px rgba(124,58,237,0.08);
-  letter-spacing: 0.5px;
-}
-button[type="submit"]:hover:not(:disabled) {
-  background: linear-gradient(90deg, var(--color-naranja) 0%, var(--color-dominante) 100%);
-  transform: translateY(-2px) scale(1.02);
-}
-button[type="submit"]:disabled {
-  background: var(--color-gris-claro);
-  color: var(--color-blanco);
-  cursor: not-allowed;
-}
-.review-create-container select {
-  font-weight: 600;
-  color: var(--color-verde-neon);
-  background: #fff0fa;
-  border: 1.5px solid var(--color-dominante);
-}
-.review-create-container select option {
-  color: var(--color-negro);
-  font-weight: 500;
-}
-.review-create-container textarea {
-  min-height: 180px;
-  max-height: 320px;
-  resize: vertical;
-  font-size: 1.15rem;
-  line-height: 1.5;
-}
-.review-create-container form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.2rem;
-}
-.review-create-container label {
-  text-align: left;
-  margin-left: 0.1rem;
-}
+

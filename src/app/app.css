@@ -1,39 +1,10 @@
-﻿:host {
-  --bg: #0f121a;
-  --surface: rgba(18, 24, 39, 0.96);
-  --surface-strong: rgba(25, 34, 55, 0.98);
-  --surface-soft: rgba(33, 42, 66, 0.92);
-  --text: #e8edf8;
-  --muted: #9ab1d6;
-  --primary: #7f9cf5;
-  --success: #4ade80;
-  --warning: #facc15;
-  --danger: #fb7185;
-  --border: rgba(148, 163, 184, 0.18);
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text);
-  background: radial-gradient(circle at top, rgba(127, 156, 245, 0.18), transparent 25%),
-    linear-gradient(180deg, #111622 0%, #09101a 100%);
-  min-height: 100vh;
+:host {
   display: block;
-}
-:host * {
-  box-sizing: border-box;
-}
-:host a {
-  color: var(--primary);
-  text-decoration: none;
-}
-:host button,
-:host input,
-:host select,
-:host textarea {
-  font: inherit;
+  min-height: 100vh;
+  width: 100%;
 }
 :host ::selection {
-  background: rgba(127, 156, 245, 0.26);
+  background: var(--primary-glow);
+  color: #fff;
 }
-::ng-deep body {
-  margin: 0;
-  min-height: 100vh;
-}
+

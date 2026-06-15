@@ -2,19 +2,37 @@
 <div class="review-create-container">
   <h2>Crear Reseña</h2>
   <form *ngIf="games.length > 0" (ngSubmit)="createReview()" #form="ngForm">
-    <label>Selecciona un juego terminado:</label>
-    <select [(ngModel)]="selectedGameId" name="game" required>
-      <option value="" disabled selected>Selecciona...</option>
-      <option *ngFor="let game of games" [value]="game.id">{{ game.nombre }}</option>
-    </select>
-    <label>Calificación:</label>
-    <input type="number" [(ngModel)]="review.calificacion" name="calificacion" min="0" max="10" required />
-    <label>Reseña:</label>
-    <textarea [(ngModel)]="review.texto" name="texto" maxlength="300" (input)="updateCharCount()" required></textarea>
-    <div class="char-count">Caracteres restantes: {{ 300 - (review.texto.length || 0) }}</div>
-    <button type="submit" [disabled]="!selectedGameId || review.texto.length === 0 || review.texto.length > 300">Guardar Reseña</button>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="create-game">Videojuego Completado</label>
+        <select id="create-game" [(ngModel)]="selectedGameId" name="game" required>
+          <option value="" disabled selected>Selecciona un videojuego...</option>
+          <option *ngFor="let game of games" [value]="game.id">{{ game.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="create-calificacion">Calificación</label>
+        <input id="create-calificacion" type="number" [(ngModel)]="review.calificacion" name="calificacion" min="0" max="10" placeholder="0 - 10" required />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="create-texto">Tu Reseña</label>
+      <textarea id="create-texto" [(ngModel)]="review.texto" name="texto" placeholder="Escribe aquí tu opinión sincera sobre el juego (máximo 300 caracteres)..." maxlength="300" (input)="updateCharCount()" required></textarea>
+      <div class="char-count">Caracteres restantes: {{ 300 - (review.texto.length || 0) }}</div>
+    </div>
+
+    <button type="submit" [disabled]="!selectedGameId || review.texto.length === 0 || review.texto.length > 300">
+      <span class="material-symbols-outlined">save</span>
+      <span>Guardar Reseña</span>
+    </button>
   </form>
+  
   <div *ngIf="games.length === 0">
-    No hay juegos terminados disponibles para reseñar.
+    <span class="material-symbols-outlined box-icon" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted);">rate_review</span>
+    <p>No hay juegos terminados disponibles para reseñar. Ve al listado y marca algún juego como "Terminado" primero.</p>
   </div>
 </div>
+
