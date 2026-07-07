@@ -1,7 +1,7 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
+import { GameService } from '../core/services/game.service';
 
 @Component({
   selector: 'app-videogames-add',
@@ -12,14 +12,17 @@ import { FormsModule } from '@angular/forms';
 })
 export class VideogamesAddComponent {
   game: any = {};
-  private firestore = inject(Firestore);
+  private gameService = inject(GameService);
+
   constructor() {}
+
+  /**
+   * Guarda un nuevo videojuego llamando al servicio local.
+   */
   async addVideogame() {
-    // No guardar calificacion aquí
     const { calificacion, ...gameData } = this.game;
-    const ref = collection(this.firestore, 'videogames');
-    await addDoc(ref, gameData);
+    await this.gameService.addGame(gameData);
     this.game = {};
-    alert('Videojuego agregado');
+    alert('Videojuego agregado con éxito');
   }
 }

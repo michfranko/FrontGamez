@@ -1,10 +1,12 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Firestore, collectionData, collection, doc, getDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { VideogamesEditComponent } from './videogames-edit.component';
 import { VideogamesDeleteComponent } from './videogames-delete.component';
+import { GameService } from '../core/services/game.service';
+import { ReviewService } from '../core/services/review.service';
+import { Game } from '../models/entities/game.model';
 
 @Component({
   selector: 'app-videogames-list',
@@ -14,46 +16,56 @@ import { VideogamesDeleteComponent } from './videogames-delete.component';
   styleUrls: ['./videogames-list.component.css', './videogames-list.layout.css', './videogames-list.searchbar.css']
 })
 export class VideogamesListComponent {
-  videogames$: Observable<any[]>;
-  allGames: any[] = [];
-  filteredGames: any[] = [];
+  videogames$: Observable<Game[]>;
+  allGames: Game[] = [];
+  filteredGames: Game[] = [];
   searchTerm: string = '';
   sortOption: string = '';
-  selectedGame: any = null;
+  selectedGame: Game | null = null;
   reviewsMap: { [gameId: string]: any } = {};
 
-  private firestore = inject(Firestore);
+  private gameService = inject(GameService);
+  private reviewService = inject(ReviewService);
+
   constructor() {
-    const ref = collection(this.firestore, 'videogames');
-    this.videogames$ = collectionData(ref, { idField: 'id' });
+    this.videogames$ = this.gameService.games$;
     this.videogames$.subscribe(games => {
       this.allGames = games;
       this.loadReviews();
     });
   }
 
+  /**
+   * Carga las reseñas en memoria local para mapear calificaciones en el listado.
+   */
   async loadReviews() {
-    // Cargar reseñas para todos los juegos en paralelo
     const reviewsMap: { [gameId: string]: any } = {};
+    
+    // Obtener las reseñas en paralelo desde el repositorio local
     await Promise.all(this.allGames.map(async (game) => {
-      const reviewRef = doc(this.firestore, `videogames/${game.id}/review/data`);
-      const reviewSnap = await getDoc(reviewRef);
-      if (reviewSnap.exists()) {
-        reviewsMap[game.id] = reviewSnap.data();
+      const review = await this.reviewService.getReviewForGame(game.id);
+      if (review) {
+        reviewsMap[game.id] = review;
       }
     }));
+    
     this.reviewsMap = reviewsMap;
     this.filterGames();
   }
 
+  /**
+   * Aplica filtros y ordenamiento en memoria al listado de juegos.
+   */
   filterGames() {
     let games = [...this.allGames];
+    
     // Filtro por nombre
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
       games = games.filter(g => g.nombre?.toLowerCase().includes(term));
     }
-    // Orden y filtros
+    
+    // Orden y filtros de estado/versión
     switch (this.sortOption) {
       case 'calificacion-desc':
         games = games.sort((a, b) => (this.getCalificacion(b) ?? 0) - (this.getCalificacion(a) ?? 0));
@@ -80,7 +92,10 @@ export class VideogamesListComponent {
     this.filteredGames = games;
   }
 
-  getCalificacion(game: any): number | null {
+  /**
+   * Obtiene la calificación numérica de un juego a partir del mapa de reseñas.
+   */
+  getCalificacion(game: Game): number | null {
     const review = this.reviewsMap[game.id];
     if (review && review.calificacion) {
       return Number(review.calificacion);
@@ -88,9 +103,10 @@ export class VideogamesListComponent {
     return null;
   }
 
-  selectGame(game: any) {
+  selectGame(game: Game) {
     this.selectedGame = { ...game };
   }
+
   clearSelection() {
     this.selectedGame = null;
   }

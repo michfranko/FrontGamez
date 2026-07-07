@@ -1,6 +1,6 @@
-import {Component, Input, inject} from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, doc, deleteDoc } from '@angular/fire/firestore';
+import { GameService } from '../core/services/game.service';
 
 @Component({
   selector: 'app-videogames-delete',
@@ -11,18 +11,16 @@ import { Firestore, doc, deleteDoc } from '@angular/fire/firestore';
 })
 export class VideogamesDeleteComponent {
   @Input() id: string = '';
-  private firestore = inject(Firestore);
+  private gameService = inject(GameService);
+
   constructor() {}
+
+  /**
+   * Elimina el videojuego seleccionado (SQLite eliminará en cascada la reseña).
+   */
   async deleteVideogame() {
     if (!this.id) return;
-    // Eliminar reseña si existe
-    const reviewRef = doc(this.firestore, `videogames/${this.id}/review/data`);
-    try {
-      await deleteDoc(reviewRef);
-    } catch {}
-    // Eliminar videojuego
-    const ref = doc(this.firestore, `videogames/${this.id}`);
-    await deleteDoc(ref);
+    await this.gameService.deleteGame(this.id);
     alert('Videojuego y reseña eliminados');
   }
 

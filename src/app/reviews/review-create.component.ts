@@ -1,8 +1,10 @@
-import {Component, OnInit, inject} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Firestore, collection, collectionData, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { ReviewsMenuComponent } from './reviews-menu.component';
+import { GameService } from '../core/services/game.service';
+import { ReviewService } from '../core/services/review.service';
+import { Game } from '../models/entities/game.model';
 
 @Component({
   selector: 'app-review-create',
@@ -12,23 +14,24 @@ import { ReviewsMenuComponent } from './reviews-menu.component';
   styleUrls: ['./review-create.component.css']
 })
 export class ReviewCreateComponent implements OnInit {
-  games: any[] = [];
+  games: Game[] = [];
   selectedGameId: string = '';
   review = { calificacion: '', texto: '' };
 
-  private firestore = inject(Firestore);
+  private gameService = inject(GameService);
+  private reviewService = inject(ReviewService);
+
   constructor() {}
 
-  async ngOnInit() {
-    const ref = collection(this.firestore, 'videogames');
-    collectionData(ref, { idField: 'id' }).subscribe(async (games: any[]) => {
-      // Solo juegos terminados que NO tengan reseña
-      const filtered = [];
+  ngOnInit() {
+    // Escuchar cambios reactivos en los videojuegos
+    this.gameService.games$.subscribe(async (games: Game[]) => {
+      const filtered: Game[] = [];
       for (const game of games) {
+        // Filtrar juegos completados que aún no posean reseña
         if (game.estado !== 'terminado') continue;
-        const reviewRef = doc(this.firestore, `videogames/${game.id}/review/data`);
-        const reviewSnap = await getDoc(reviewRef);
-        if (!reviewSnap.exists()) {
+        const existingReview = await this.reviewService.getReviewForGame(game.id);
+        if (!existingReview) {
           filtered.push(game);
         }
       }
@@ -38,19 +41,20 @@ export class ReviewCreateComponent implements OnInit {
 
   updateCharCount() {}
 
+  /**
+   * Crea una nueva reseña en SQLite y actualiza el estado local de los juegos.
+   */
   async createReview() {
     if (!this.selectedGameId || !this.review.texto || this.review.texto.length > 300) return;
-    const reviewRef = doc(this.firestore, `videogames/${this.selectedGameId}/review/data`);
-    await setDoc(reviewRef, {
-      calificacion: this.review.calificacion,
-      texto: this.review.texto
-    });
-    // Actualizar la calificación en el documento principal del juego
-    const gameRef = doc(this.firestore, `videogames/${this.selectedGameId}`);
-    await setDoc(gameRef, { calificacion: this.review.calificacion }, { merge: true });
+    
+    await this.reviewService.saveReview(
+      this.selectedGameId,
+      this.review.calificacion,
+      this.review.texto
+    );
+    
     alert('Reseña guardada');
     this.selectedGameId = '';
     this.review = { calificacion: '', texto: '' };
-    this.ngOnInit();
   }
 }

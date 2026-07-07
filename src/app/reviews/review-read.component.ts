@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Firestore, collection, collectionData, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { ReviewsMenuComponent } from './reviews-menu.component';
+import { ReviewService } from '../core/services/review.service';
 
 @Component({
   selector: 'app-review-read',
@@ -18,26 +18,27 @@ export class ReviewReadComponent implements OnInit {
   editReviewId: string | null = null;
   editReview: any = { calificacion: '', texto: '' };
 
-  constructor(private firestore: Firestore) {}
+  private reviewService = inject(ReviewService);
 
-  async ngOnInit() {
-    const ref = collection(this.firestore, 'videogames');
-    collectionData(ref, { idField: 'id' }).subscribe(async (games: any[]) => {
-      const reviewsArr: any[] = [];
-      await Promise.all(games.map(async (game: any) => {
-        const reviewRef = doc(this.firestore, `videogames/${game.id}/review/data`);
-        const reviewSnap = await getDoc(reviewRef);
-        if (reviewSnap.exists()) {
-          const data = reviewSnap.data();
-          reviewsArr.push({ id: game.id, nombre: game.nombre, calificacion: data['calificacion'], texto: data['texto'] });
-        }
-      }));
-      // Ordenar por calificación de mayor a menor
-      this.reviews = reviewsArr.sort((a, b) => Number(b.calificacion) - Number(a.calificacion));
+  constructor() {}
+
+  ngOnInit() {
+    // Suscribirse de manera reactiva a los cambios en las reseñas
+    this.reviewService.reviews$.subscribe((reviewsList) => {
+      this.reviews = reviewsList.map(r => ({
+        id: r.game_id,
+        nombre: r.gameNombre,
+        calificacion: r.calificacion,
+        texto: r.texto
+      })).sort((a, b) => Number(b.calificacion) - Number(a.calificacion));
+      
       this.filterReviews();
     });
   }
 
+  /**
+   * Filtra las reseñas por el término de búsqueda.
+   */
   filterReviews() {
     const term = this.searchTerm.toLowerCase();
     this.filteredReviews = this.reviews.filter(r => r.nombre.toLowerCase().includes(term));
@@ -53,14 +54,18 @@ export class ReviewReadComponent implements OnInit {
     this.editReview = { calificacion: '', texto: '' };
   }
 
+  /**
+   * Guarda la reseña editada a través del servicio local de negocio.
+   */
   async saveEdit() {
     if (!this.editReviewId) return;
-    const reviewRef = doc(this.firestore, `videogames/${this.editReviewId}/review/data`);
-    await setDoc(reviewRef, {
-      calificacion: this.editReview.calificacion,
-      texto: this.editReview.texto
-    });
+    
+    await this.reviewService.saveReview(
+      this.editReviewId,
+      this.editReview.calificacion,
+      this.editReview.texto
+    );
+    
     this.cancelEdit();
-    this.ngOnInit();
   }
 }

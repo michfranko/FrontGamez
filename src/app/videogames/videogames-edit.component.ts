@@ -1,7 +1,7 @@
-import {Component, Input, inject} from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
+import { GameService } from '../core/services/game.service';
 
 @Component({
   selector: 'app-videogames-edit',
@@ -12,14 +12,20 @@ import { FormsModule } from '@angular/forms';
 })
 export class VideogamesEditComponent {
   @Input() game: any;
-  private firestore = inject(Firestore);
+  private gameService = inject(GameService);
+
   constructor() {}
+
+  /**
+   * Actualiza el videojuego seleccionado utilizando el servicio local.
+   */
   async editVideogame() {
     if (!this.game?.id) return;
-    // No permitir editar calificacion aquí
     const { calificacion, ...gameData } = this.game;
-    const ref = doc(this.firestore, `videogames/${this.game.id}`);
-    await updateDoc(ref, gameData);
+    await this.gameService.updateGame({
+      ...this.game,
+      ...gameData
+    });
     alert('Videojuego actualizado');
   }
 
