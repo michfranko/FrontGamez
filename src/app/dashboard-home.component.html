@@ -26,13 +26,8 @@
         <strong>{{ pendingCount }}</strong>
         <span>juegos pendientes</span>
       </div>
-    </div>
-    <div class="alert-card warning">
-      <span class="material-symbols-outlined alert-icon">history</span>
-      <div class="alert-content">
-        <span>Último completado</span>
-        <strong>{{ daysSinceLastCompletion !== null ? daysSinceLastCompletion + ' días' : 'aún no' }}</strong>
-        <span>de inactividad</span>
+      <div class="alert-actions">
+        <a [routerLink]="['/dashboard/videogames/list']" [queryParams]="{ filter: 'estado-pendiente' }" class="btn-small">Ver pendientes</a>
       </div>
     </div>
     <div class="alert-card success">
@@ -75,6 +70,33 @@
       </div>
       <div class="metric-value">{{ bestYear }}</div>
     </article>
+  </div>
+
+  <!-- Jugando Section -->
+  <div class="playing-section">
+    <div class="playing-header">
+      <div>
+        <h2>Jugando <small>({{ filteredPlaying().length }})</small></h2>
+      </div>
+      <div class="playing-filters">
+        <button class="filter-btn" [class.active]="playingPlatformFilter === ''" (click)="playingPlatformFilter = ''">Todos</button>
+        <button class="filter-btn" [class.active]="playingPlatformFilter === 'pc'" (click)="playingPlatformFilter = 'pc'">PC</button>
+        <button class="filter-btn" [class.active]="playingPlatformFilter === 'playstation'" (click)="playingPlatformFilter = 'playstation'">PlayStation</button>
+      </div>
+    </div>
+    <div class="playing-list">
+      <div *ngFor="let game of filteredPlaying()" class="playing-item">
+        <div class="playing-left">
+          <strong class="playing-name">{{ game.nombre }}</strong>
+          <span class="playing-platform">{{ game.plataforma || '—' }}</span>
+        </div>
+        <div class="playing-right">
+          <span class="playing-version">{{ game.version || '' }}</span>
+          <span class="playing-status">{{ game.estado }}</span>
+        </div>
+      </div>
+      <div *ngIf="filteredPlaying().length === 0" class="no-playing">No hay juegos en estado "Jugando".</div>
+    </div>
   </div>
 
   <!-- Recomendaciones y Top Personal -->

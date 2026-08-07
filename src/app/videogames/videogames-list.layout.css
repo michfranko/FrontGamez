@@ -273,17 +273,27 @@
   margin-bottom: 1.5rem;
 }
 
-/* Panel de Edición Lateral Flotante */
+/* Panel de Edición (ahora modal) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 1200;
+}
+
 .edit-panel {
-  width: 380px;
+  width: 640px;
+  max-width: calc(100% - 40px);
   background: var(--bg-surface-solid);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-  padding: 2rem 1.75rem;
-  position: sticky;
-  top: 1.5rem;
-  animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem 1.5rem;
+  animation: slide-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
 @keyframes slide-in {

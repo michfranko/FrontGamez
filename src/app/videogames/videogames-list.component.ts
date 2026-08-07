@@ -7,6 +7,7 @@ import { VideogamesDeleteComponent } from './videogames-delete.component';
 import { GameService } from '../core/services/game.service';
 import { ReviewService } from '../core/services/review.service';
 import { Game } from '../models/entities/game.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-videogames-list',
@@ -26,12 +27,22 @@ export class VideogamesListComponent {
 
   private gameService = inject(GameService);
   private reviewService = inject(ReviewService);
+  private route = inject(ActivatedRoute);
 
   constructor() {
     this.videogames$ = this.gameService.games$;
     this.videogames$.subscribe(games => {
       this.allGames = games;
       this.loadReviews();
+    });
+
+    // Aplicar filtros pasados por query params (p. ej. desde el dashboard)
+    this.route.queryParams.subscribe(params => {
+      const f = params['filter'];
+      if (f) {
+        this.sortOption = f;
+        this.filterGames();
+      }
     });
   }
 
@@ -68,10 +79,15 @@ export class VideogamesListComponent {
     // Orden y filtros de estado/versión
     switch (this.sortOption) {
       case 'calificacion-desc':
-        games = games.sort((a, b) => (this.getCalificacion(b) ?? 0) - (this.getCalificacion(a) ?? 0));
+        // Sólo considerar juegos que tienen calificación
+        games = games
+          .filter(g => this.getCalificacion(g) !== null)
+          .sort((a, b) => (this.getCalificacion(b) ?? 0) - (this.getCalificacion(a) ?? 0));
         break;
       case 'calificacion-asc':
-        games = games.sort((a, b) => (this.getCalificacion(a) ?? 0) - (this.getCalificacion(b) ?? 0));
+        games = games
+          .filter(g => this.getCalificacion(g) !== null)
+          .sort((a, b) => (this.getCalificacion(a) ?? 0) - (this.getCalificacion(b) ?? 0));
         break;
       case 'estado-terminado':
         games = games.filter(g => g.estado === 'terminado');

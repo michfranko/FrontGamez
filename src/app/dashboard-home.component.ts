@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { GameService } from './core/services/game.service';
 import { StatisticsService } from './core/services/statistics.service';
 import { Game } from './models/entities/game.model';
@@ -7,13 +8,13 @@ import { Game } from './models/entities/game.model';
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard-home.component.html',
   styleUrls: ['./dashboard-home.component.css']
 })
 export class DashboardHomeComponent implements OnInit {
   games: Game[] = [];
-  
+
   // Propiedades requeridas por la plantilla HTML
   totalGames = 0;
   completedCount = 0;
@@ -27,6 +28,9 @@ export class DashboardHomeComponent implements OnInit {
   pendingOldestDays: number | null = null;
   daysSinceLastCompletion: number | null = null;
   bestYear = 'N/A';
+  // Jugando section
+  playingPlatformFilter: string = ''; // '', 'pc', 'playstation'
+  playingGames: Game[] = [];
 
   private gameService = inject(GameService);
   private statisticsService = inject(StatisticsService);
@@ -36,6 +40,7 @@ export class DashboardHomeComponent implements OnInit {
     this.gameService.games$.subscribe((games: Game[]) => {
       this.games = games;
       this.buildStats();
+      this.buildPlaying();
     });
   }
 
@@ -44,7 +49,7 @@ export class DashboardHomeComponent implements OnInit {
    */
   buildStats() {
     const stats = this.statisticsService.computeStats(this.games);
-    
+
     this.totalGames = stats.totalGames;
     this.completedCount = stats.completedCount;
     this.pendingCount = stats.pendingCount;
@@ -57,6 +62,21 @@ export class DashboardHomeComponent implements OnInit {
     this.pendingOldestDays = stats.pendingOldestDays;
     this.daysSinceLastCompletion = stats.daysSinceLastCompletion;
     this.bestYear = stats.bestYear;
+  }
+
+  buildPlaying() {
+    this.playingGames = this.games.filter(g => (g.estado || '').toLowerCase() === 'jugando');
+  }
+
+  filteredPlaying(platformFilter?: string) {
+    const pf = ((platformFilter ?? this.playingPlatformFilter) || '').toString().toLowerCase();
+    if (!pf) return this.playingGames;
+    return this.playingGames.filter(g => {
+      const p = (g.plataforma || '').toLowerCase();
+      if (pf === 'pc') return p.includes('pc') || p.includes('steam');
+      if (pf === 'playstation') return p.includes('playstation') || p.includes('ps');
+      return true;
+    });
   }
 
   /**

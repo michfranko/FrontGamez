@@ -383,6 +383,30 @@
   font-size: 0.9rem;
 }
 
+/* Jugando section */
+.playing-section {
+  padding: 1.25rem 1rem;
+  border-radius: var(--border-radius-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+}
+.playing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+.playing-filters { display:flex; gap:0.5rem; }
+.filter-btn { padding:0.35rem 0.6rem; border-radius:6px; background:transparent; border:1px solid transparent; color:var(--text-secondary); cursor:pointer }
+.filter-btn.active { background: rgba(255,255,255,0.04); border-color:var(--border-color); color:#fff }
+.playing-list { max-height: 330px; overflow-y: auto; display:flex; flex-direction:column; gap:0.5rem; padding-right:0.5rem }
+.playing-item { display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0.75rem; border-radius:8px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02) }
+.playing-name { font-weight:700 }
+.playing-platform { font-size:0.85rem; color:var(--text-muted); margin-left:0.6rem }
+.playing-right { display:flex; gap:0.6rem; align-items:center }
+.no-playing { color:var(--text-muted); padding:0.6rem }
+
 /* Responsividad */
 @media (max-width: 1200px) {
   .metrics-grid {

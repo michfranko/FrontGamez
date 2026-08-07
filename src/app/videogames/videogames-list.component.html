@@ -92,16 +92,18 @@
     </div>
   </ng-template>
 
-  <!-- Panel Flotante de Edición -->
-  <div *ngIf="selectedGame" class="edit-panel">
-    <div class="panel-header">
-      <span class="material-symbols-outlined">edit_note</span>
-      <h3>Modificar Juego</h3>
-      <button class="close-panel-btn" (click)="clearSelection()" title="Cerrar panel">
-        <span class="material-symbols-outlined">close</span>
-      </button>
+  <!-- Modal de Edición -->
+  <div *ngIf="selectedGame" class="modal-overlay" (click)="clearSelection()">
+    <div class="edit-panel modal-window" (click)="$event.stopPropagation()">
+      <div class="panel-header">
+        <span class="material-symbols-outlined">edit_note</span>
+        <h3>Modificar Juego</h3>
+        <button class="close-panel-btn" (click)="clearSelection()" title="Cerrar panel">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <app-videogames-edit [game]="selectedGame" (ngSubmit)="clearSelection()" (cancelEdit)="clearSelection()"></app-videogames-edit>
     </div>
-    <app-videogames-edit [game]="selectedGame" (ngSubmit)="clearSelection()" (cancelEdit)="clearSelection()"></app-videogames-edit>
   </div>
 </div>
 
