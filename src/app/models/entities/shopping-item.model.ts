@@ -1,7 +1,17 @@
 export interface ShoppingItem {
-  id: string; // UUID
-  list_id: string; // References shopping_lists.id
+  id: string;
+  list_id: string;
   nombre: string;
-  precio: number;
-  comprado: boolean; // boolean representing 0/1 in SQLite
+  precioBase: number;          // Precio antes de impuesto
+  tienda: string;              // Tienda/plataforma (Amazon, PlayStation, Steam...)
+  porcentajeImpuesto: number;  // Porcentaje de impuesto (ej: 10, 15)
+  cantidad: number;            // Cantidad de unidades
+  comprado: boolean;
+}
+
+/** Resultado calculado para un item (no se persiste en BD) */
+export interface ShoppingItemCalculado extends ShoppingItem {
+  subtotal: number;       // precioBase × cantidad
+  montoImpuesto: number;  // subtotal × (porcentajeImpuesto/100)
+  precioFinal: number;    // subtotal + montoImpuesto
 }

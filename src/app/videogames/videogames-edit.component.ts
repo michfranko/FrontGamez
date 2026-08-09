@@ -1,7 +1,8 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GameService } from '../core/services/game.service';
+import { ToastService } from '../core/services/toast.service';
 
 @Component({
   selector: 'app-videogames-edit',
@@ -12,7 +13,11 @@ import { GameService } from '../core/services/game.service';
 })
 export class VideogamesEditComponent {
   @Input() game: any;
+  @Output() saved = new EventEmitter<void>();
+  @Output() canceled = new EventEmitter<void>();
+
   private gameService = inject(GameService);
+  private toastService = inject(ToastService);
 
   constructor() {}
 
@@ -26,8 +31,11 @@ export class VideogamesEditComponent {
       ...this.game,
       ...gameData
     });
-    alert('Videojuego actualizado');
+    this.toastService.success('Videojuego actualizado con éxito');
+    this.saved.emit();
   }
 
-  cancelEdit() {}
+  cancelEdit() {
+    this.canceled.emit();
+  }
 }

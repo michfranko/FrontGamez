@@ -1,8 +1,9 @@
 export interface WishlistItem {
-  id: string; // UUID
+  id: string;
   nombre: string;
-  plataforma: string;
-  prioridad: string; // 'alta', 'media', 'baja'
+  plataforma: string;      // Tienda de compra (Amazon, PlayStation, Steam, etc.)
+  prioridad: string;       // 'alta', 'media', 'baja'
   notas: string | null;
-  fechaAgregado: string; // YYYY-MM-DD
+  fechaAgregado: string;   // YYYY-MM-DD
+  precioBase: number;      // Precio en USD antes de impuesto
 }

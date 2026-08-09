@@ -1,9 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ReviewsMenuComponent } from './reviews-menu.component';
 import { GameService } from '../core/services/game.service';
 import { ReviewService } from '../core/services/review.service';
+import { ToastService } from '../core/services/toast.service';
 import { Game } from '../models/entities/game.model';
 
 @Component({
@@ -16,10 +18,12 @@ import { Game } from '../models/entities/game.model';
 export class ReviewCreateComponent implements OnInit {
   games: Game[] = [];
   selectedGameId: string = '';
-  review = { calificacion: '', texto: '' };
+  review = { calificacion: '10', texto: '' };
 
   private gameService = inject(GameService);
   private reviewService = inject(ReviewService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
 
   constructor() {}
 
@@ -53,8 +57,9 @@ export class ReviewCreateComponent implements OnInit {
       this.review.texto
     );
     
-    alert('Reseña guardada');
+    this.toastService.success('Reseña guardada con éxito');
     this.selectedGameId = '';
-    this.review = { calificacion: '', texto: '' };
+    this.review = { calificacion: '10', texto: '' };
+    this.router.navigate(['/dashboard/reviews/read']);
   }
 }

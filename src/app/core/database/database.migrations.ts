@@ -74,5 +74,37 @@ export const MIGRATIONS: Migration[] = [
         value TEXT NOT NULL
       );
     `
+  },
+  {
+    version: 2,
+    sql: `
+      -- Migración Versión 2: Índices de rendimiento (no modifica datos)
+      CREATE INDEX IF NOT EXISTS idx_games_estado ON games(estado);
+      CREATE INDEX IF NOT EXISTS idx_games_plataforma ON games(plataforma);
+      CREATE INDEX IF NOT EXISTS idx_shopping_items_list ON shopping_items(list_id);
+    `
+  },
+  {
+    version: 3,
+    sql: `
+      -- Migración Versión 3: Agregar campos de precio, impuesto y tienda a wishlist y shopping_items
+      -- Nota: SQLite no soporta ADD COLUMN con constrains complejas, se usa DEFAULT seguro.
+
+      ALTER TABLE wishlist ADD COLUMN precioBase REAL DEFAULT 0;
+
+      ALTER TABLE shopping_items ADD COLUMN precioBase REAL DEFAULT 0;
+      ALTER TABLE shopping_items ADD COLUMN tienda TEXT DEFAULT '';
+      ALTER TABLE shopping_items ADD COLUMN porcentajeImpuesto REAL DEFAULT 0;
+      ALTER TABLE shopping_items ADD COLUMN cantidad INTEGER DEFAULT 1;
+
+      -- Insertar configuración inicial de impuestos por tienda (si no existen)
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_amazon', '10');
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_playstation', '15');
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_steam', '15');
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_nintendo', '10');
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_xbox', '10');
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_epic', '0');
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_otra', '0');
+    `
   }
 ];

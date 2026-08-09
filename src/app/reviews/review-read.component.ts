@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ReviewsMenuComponent } from './reviews-menu.component';
 import { ReviewService } from '../core/services/review.service';
+import { ToastService } from '../core/services/toast.service';
 
 @Component({
   selector: 'app-review-read',
@@ -19,6 +20,7 @@ export class ReviewReadComponent implements OnInit {
   editReview: any = { calificacion: '', texto: '' };
 
   private reviewService = inject(ReviewService);
+  private toastService = inject(ToastService);
 
   constructor() {}
 
@@ -41,7 +43,7 @@ export class ReviewReadComponent implements OnInit {
    */
   filterReviews() {
     const term = this.searchTerm.toLowerCase();
-    this.filteredReviews = this.reviews.filter(r => r.nombre.toLowerCase().includes(term));
+    this.filteredReviews = this.reviews.filter(r => (r.nombre || '').toLowerCase().includes(term));
   }
 
   startEdit(review: any) {
@@ -66,6 +68,14 @@ export class ReviewReadComponent implements OnInit {
       this.editReview.texto
     );
     
+    this.toastService.success('Reseña actualizada');
     this.cancelEdit();
+  }
+
+  async deleteReview(gameId: string) {
+    if (confirm('¿Estás seguro de eliminar esta reseña?')) {
+      await this.reviewService.deleteReview(gameId);
+      this.toastService.info('Reseña eliminada');
+    }
   }
 }

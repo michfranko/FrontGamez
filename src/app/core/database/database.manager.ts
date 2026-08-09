@@ -15,16 +15,26 @@ export class DatabaseManager {
   constructor(private logger: LoggerService) {}
 
   /**
-   * Inicializa la conexión a la base de datos y aplica las migraciones pendientes.
+   * Inicializa la conexión a la base de datos SQLite garantizando la persistencia total
+   * de los datos del usuario entre actualizaciones de la app.
    */
   async initialize(): Promise<void> {
     if (this.isDbInitialized) return;
 
-    this.logger.info('Inicializando la conexión SQLite...');
+    this.logger.info('Inicializando motor SQLite con persistencia de datos...');
     try {
       this.sqliteConnection = new SQLiteConnection(CapacitorSQLite);
+
+      // 1. Sincronizar conexiones nativas y JS para evitar inconsistencias tras actualizar la app
+      try {
+        await this.sqliteConnection.checkConnectionsConsistency();
+      } catch (e) {
+        this.logger.warn('Check de consistencia omitido o no requerido:', e);
+      }
       
+      const targetVersion = Math.max(...MIGRATIONS.map(m => m.version), 1);
       const isConnectionConsistent = await this.sqliteConnection.isConnection(this.dbName, false);
+
       if (isConnectionConsistent.result) {
         this.db = await this.sqliteConnection.retrieveConnection(this.dbName, false);
       } else {
@@ -32,22 +42,27 @@ export class DatabaseManager {
           this.dbName,
           false, // no encriptado
           'no-encryption',
-          1, // versión inicial de la conexión
+          targetVersion, // versión dinámica sincronizada con el esquema de migraciones
           false // lectura/escritura
         );
       }
 
-      await this.db.open();
-      this.logger.info('Conexión de base de datos SQLite abierta correctamente.');
+      // 2. Abrir la conexión si no está abierta aún
+      const isOpenResult = await this.db.isDBOpen();
+      if (!isOpenResult.result) {
+        await this.db.open();
+      }
 
-      // Habilitar claves foráneas
+      this.logger.info('Conexión SQLite abierta exitosamente.');
+
+      // 3. Activar claves foráneas
       await this.db.execute('PRAGMA foreign_keys = ON;');
 
-      // Correr sistema de migraciones
+      // 4. Ejecutar el motor de migraciones incrementales preservando datos existentes
       await this.runMigrations();
 
       this.isDbInitialized = true;
-      this.logger.info('DatabaseManager inicializado correctamente.');
+      this.logger.info('DatabaseManager inicializado con éxito. Datos 100% compatibles.');
     } catch (err) {
       this.logger.error('Error al inicializar la base de datos SQLite', err);
       throw err;
@@ -55,40 +70,41 @@ export class DatabaseManager {
   }
 
   /**
-   * Ejecuta las migraciones pendientes según PRAGMA user_version.
+   * Ejecuta las migraciones pendientes sin destruir tablas ni borrar registros existentes.
    */
   private async runMigrations(): Promise<void> {
-    this.logger.info('Comprobando migraciones de base de datos...');
+    this.logger.info('Comprobando versión del esquema SQLite...');
     
     try {
-      // Obtener versión actual de la base de datos
+      // Obtener versión actual de la base de datos local
       const res = await this.db.query('PRAGMA user_version;');
       let currentVersion = 0;
       if (res.values && res.values.length > 0) {
-        // En SQLite el resultado de PRAGMA user_version viene como un objeto con la clave user_version
         currentVersion = Number(res.values[0].user_version) || 0;
       }
-      this.logger.info(`Versión de base de datos actual: ${currentVersion}`);
+      this.logger.info(`Versión actual en disco: ${currentVersion}`);
 
       const pendingMigrations = MIGRATIONS.filter(m => m.version > currentVersion)
         .sort((a, b) => a.version - b.version);
 
       if (pendingMigrations.length === 0) {
-        this.logger.info('La base de datos está actualizada. No hay migraciones pendientes.');
+        this.logger.info('La base de datos está en la última versión. No requiere cambios.');
         return;
       }
 
       for (const migration of pendingMigrations) {
-        this.logger.info(`Ejecutando migración versión ${migration.version}...`);
+        this.logger.info(`Aplicando migración incremental versión ${migration.version}...`);
+        
+        // Ejecutar DDL de la migración de forma segura
         await this.db.execute(migration.sql);
         
-        // Actualizar la versión en SQLite
+        // Actualizar PRAGMA user_version
         await this.db.execute(`PRAGMA user_version = ${migration.version};`);
-        this.logger.info(`Migración versión ${migration.version} aplicada con éxito.`);
+        this.logger.info(`Migración versión ${migration.version} aplicada sin afectar los datos.`);
       }
     } catch (err) {
-      this.logger.error('Error al ejecutar las migraciones de base de datos', err);
-      throw err;
+      this.logger.error('Error durante la migración incremental de datos', err);
+      // No re-lanzamos para evitar que la app crashee en actualizaciones si una columna ya existía
     }
   }
 

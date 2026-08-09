@@ -9,11 +9,8 @@ import { ShoppingItem } from '../../models/entities/shopping-item.model';
 export class ShoppingRepository {
   constructor(private db: DatabaseManager) {}
 
-  /**
-   * Obtiene todas las listas de compras.
-   */
   async getAllLists(): Promise<ShoppingList[]> {
-    const rows = await this.db.query('SELECT * FROM shopping_lists');
+    const rows = await this.db.query('SELECT * FROM shopping_lists ORDER BY fechaCreacion DESC');
     return rows.map((row: any) => ({
       id: row.id,
       nombre: row.nombre,
@@ -21,23 +18,20 @@ export class ShoppingRepository {
     }));
   }
 
-  /**
-   * Obtiene todos los artículos de una lista de compras específica.
-   */
   async getItemsByListId(listId: string): Promise<ShoppingItem[]> {
     const rows = await this.db.query('SELECT * FROM shopping_items WHERE list_id = ?', [listId]);
     return rows.map((row: any) => ({
       id: row.id,
       list_id: row.list_id,
       nombre: row.nombre,
-      precio: row.precio,
+      precioBase: parseFloat(row.precioBase) || 0,
+      tienda: row.tienda || '',
+      porcentajeImpuesto: parseFloat(row.porcentajeImpuesto) || 0,
+      cantidad: parseInt(row.cantidad) || 1,
       comprado: row.comprado === 1
     }));
   }
 
-  /**
-   * Crea una nueva lista de compras.
-   */
   async createList(list: ShoppingList): Promise<void> {
     await this.db.execute(
       'INSERT INTO shopping_lists (id, nombre, fechaCreacion) VALUES (?, ?, ?)',
@@ -45,19 +39,24 @@ export class ShoppingRepository {
     );
   }
 
-  /**
-   * Agrega un artículo a una lista de compras.
-   */
   async createItem(item: ShoppingItem): Promise<void> {
     await this.db.execute(
-      'INSERT INTO shopping_items (id, list_id, nombre, precio, comprado) VALUES (?, ?, ?, ?, ?)',
-      [item.id, item.list_id, item.nombre, item.precio, item.comprado ? 1 : 0]
+      `INSERT INTO shopping_items
+        (id, list_id, nombre, precioBase, tienda, porcentajeImpuesto, cantidad, comprado)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        item.id,
+        item.list_id,
+        item.nombre,
+        item.precioBase,
+        item.tienda,
+        item.porcentajeImpuesto,
+        item.cantidad,
+        item.comprado ? 1 : 0
+      ]
     );
   }
 
-  /**
-   * Actualiza el estado de compra de un artículo.
-   */
   async updateItemStatus(itemId: string, comprado: boolean): Promise<void> {
     await this.db.execute(
       'UPDATE shopping_items SET comprado = ? WHERE id = ?',
@@ -65,9 +64,10 @@ export class ShoppingRepository {
     );
   }
 
-  /**
-   * Elimina una lista de compras (y sus artículos por ON DELETE CASCADE).
-   */
+  async deleteItem(itemId: string): Promise<void> {
+    await this.db.execute('DELETE FROM shopping_items WHERE id = ?', [itemId]);
+  }
+
   async deleteList(id: string): Promise<void> {
     await this.db.execute('DELETE FROM shopping_lists WHERE id = ?', [id]);
   }

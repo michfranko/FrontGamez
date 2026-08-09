@@ -102,7 +102,7 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <app-videogames-edit [game]="selectedGame" (ngSubmit)="clearSelection()" (cancelEdit)="clearSelection()"></app-videogames-edit>
+      <app-videogames-edit [game]="selectedGame" (saved)="clearSelection()" (canceled)="clearSelection()"></app-videogames-edit>
     </div>
   </div>
 </div>

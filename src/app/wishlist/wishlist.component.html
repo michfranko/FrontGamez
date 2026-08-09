@@ -1,0 +1,58 @@
+<div class="wishlist-container">
+  <div class="header-section">
+    <h2><span class="material-symbols-outlined header-icon">auto_awesome</span> Lista de Deseos</h2>
+    <p>Registra videojuegos que planeas comprar o adquirir más adelante.</p>
+  </div>
+
+  <!-- Formulario rápido de adición -->
+  <form (ngSubmit)="addItem()" class="wishlist-form">
+    <div class="form-row">
+      <input type="text" [(ngModel)]="newItem.nombre" name="nombre" placeholder="Nombre del juego deseado..." required class="input-nombre" />
+      
+      <select [(ngModel)]="newItem.plataforma" name="plataforma" class="select-plat">
+        <option value="PC">PC</option>
+        <option value="PlayStation">PlayStation</option>
+        <option value="Xbox">Xbox</option>
+        <option value="Nintendo Switch">Nintendo Switch</option>
+        <option value="Móvil">Móvil</option>
+      </select>
+
+      <select [(ngModel)]="newItem.prioridad" name="prioridad" class="select-prio">
+        <option value="alta">Prioridad Alta</option>
+        <option value="media">Prioridad Media</option>
+        <option value="baja">Prioridad Baja</option>
+      </select>
+
+      <button type="submit" [disabled]="!newItem.nombre" class="btn-add">
+        <span class="material-symbols-outlined">add_task</span>
+        <span>Añadir</span>
+      </button>
+    </div>
+    <div class="form-notes-row">
+      <input type="text" [(ngModel)]="newItem.notas" name="notas" placeholder="Notas opcionales (ej: Esperar oferta en Steam...)" class="input-notes" />
+    </div>
+  </form>
+
+  <!-- Lista de Elementos -->
+  <div class="items-grid">
+    <div *ngFor="let item of items" class="wish-card" [attr.data-prio]="item.prioridad">
+      <div class="card-header">
+        <span class="plat-badge">{{ item.plataforma }}</span>
+        <span class="prio-tag" [ngClass]="item.prioridad">{{ item.prioridad }}</span>
+      </div>
+      <h3>{{ item.nombre }}</h3>
+      <p class="notes" *ngIf="item.notas">{{ item.notas }}</p>
+      <div class="card-footer">
+        <span class="date">Añadido: {{ item.fechaAgregado }}</span>
+        <button (click)="deleteItem(item.id)" class="btn-delete" title="Eliminar de la lista">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="items.length === 0" class="empty-state">
+      <span class="material-symbols-outlined empty-icon">bookmark_border</span>
+      <p>Tu lista de deseos está vacía. ¡Agrega el primer título que desees adquirir!</p>
+    </div>
+  </div>
+</div>

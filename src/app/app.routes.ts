@@ -5,8 +5,9 @@ import { VideogamesListComponent } from './videogames/videogames-list.component'
 import { VideogamesAddComponent } from './videogames/videogames-add.component';
 import { ReviewCreateComponent } from './reviews/review-create.component';
 import { ReviewReadComponent } from './reviews/review-read.component';
-import { DashboardMenuComponent } from './dashboard-menu/dashboard-menu.component';
 import { DashboardHomeComponent } from './dashboard-home.component';
+import { ShoppingComponent } from './shopping/shopping.component';
+import { SettingsComponent } from './settings/settings.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -19,6 +20,8 @@ export const routes: Routes = [
       { path: 'videogames/add', component: VideogamesAddComponent },
       { path: 'reviews/create', component: ReviewCreateComponent },
       { path: 'reviews/read', component: ReviewReadComponent },
+      { path: 'shopping', component: ShoppingComponent },
+      { path: 'settings', component: SettingsComponent },
     ]
   }
 ];

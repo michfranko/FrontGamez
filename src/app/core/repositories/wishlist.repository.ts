@@ -12,14 +12,15 @@ export class WishlistRepository {
    * Obtiene todos los artículos de la lista de deseos.
    */
   async getAll(): Promise<WishlistItem[]> {
-    const rows = await this.db.query('SELECT * FROM wishlist');
+    const rows = await this.db.query('SELECT * FROM wishlist ORDER BY fechaAgregado DESC');
     return rows.map((row: any) => ({
       id: row.id,
       nombre: row.nombre,
       plataforma: row.plataforma,
       prioridad: row.prioridad,
       notas: row.notas,
-      fechaAgregado: row.fechaAgregado
+      fechaAgregado: row.fechaAgregado,
+      precioBase: parseFloat(row.precioBase) || 0
     }));
   }
 
@@ -28,10 +29,18 @@ export class WishlistRepository {
    */
   async create(item: WishlistItem): Promise<void> {
     const sql = `
-      INSERT INTO wishlist (id, nombre, plataforma, prioridad, notas, fechaAgregado)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO wishlist (id, nombre, plataforma, prioridad, notas, fechaAgregado, precioBase)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-    await this.db.execute(sql, [item.id, item.nombre, item.plataforma, item.prioridad, item.notas, item.fechaAgregado]);
+    await this.db.execute(sql, [
+      item.id,
+      item.nombre,
+      item.plataforma,
+      item.prioridad,
+      item.notas,
+      item.fechaAgregado,
+      item.precioBase ?? 0
+    ]);
   }
 
   /**

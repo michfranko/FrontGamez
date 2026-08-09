@@ -1,0 +1,324 @@
+<div class="shop-page">
+
+  <!-- ═══════════════ HEADER ═══════════════ -->
+  <div class="page-header">
+    <div class="page-title-group">
+      <span class="material-symbols-outlined page-icon">shopping_bag</span>
+      <div>
+        <h2>Compras &amp; Lista de Deseos</h2>
+        <p>Planifica tus compras gaming con cálculo de impuestos por tienda</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TABS ═══════════════ -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'wishlist'" (click)="setTab('wishlist')">
+      <span class="material-symbols-outlined">auto_awesome</span>
+      <span>Lista de Deseos</span>
+      <span class="tab-badge" *ngIf="wishlistItems.length > 0">{{ wishlistItems.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'shopping'" (click)="setTab('shopping')">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span>Compras Gaming</span>
+      <span class="tab-badge" *ngIf="lists.length > 0">{{ lists.length }}</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════ WISHLIST TAB ═══════════════ -->
+  <div *ngIf="activeTab === 'wishlist'" class="tab-content">
+
+    <!-- Botón agregar -->
+    <div class="section-action-row">
+      <div class="wish-summary" *ngIf="wishlistItems.length > 0">
+        <span class="material-symbols-outlined">receipt_long</span>
+        Total wishlist (con impuestos): <strong>{{ fmt(getTotalWishlist()) }}</strong>
+      </div>
+      <button class="btn-primary" (click)="showWishForm = !showWishForm">
+        <span class="material-symbols-outlined">{{ showWishForm ? 'close' : 'add_task' }}</span>
+        <span>{{ showWishForm ? 'Cancelar' : 'Añadir Juego' }}</span>
+      </button>
+    </div>
+
+    <!-- Formulario de agregar -->
+    <div class="form-card" *ngIf="showWishForm">
+      <h3><span class="material-symbols-outlined">edit_note</span> Nuevo Deseo</h3>
+      <div class="form-grid">
+        <div class="form-field full-width">
+          <label>Nombre del juego</label>
+          <input type="text" [(ngModel)]="newWishItem.nombre" placeholder="Ej: Elden Ring DLC..." />
+        </div>
+        <div class="form-field">
+          <label>Tienda / Plataforma</label>
+          <select [(ngModel)]="newWishItem.plataforma" (change)="onTiendaWishChange()">
+            <option *ngFor="let s of taxStores" [value]="s.label">{{ s.label }} ({{ s.porcentaje }}% imp.)</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Precio Base (USD)</label>
+          <div class="input-prefix">
+            <span>$</span>
+            <input type="number" [(ngModel)]="newWishItem.precioBase" min="0" step="0.01" placeholder="0.00" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Prioridad</label>
+          <select [(ngModel)]="newWishItem.prioridad">
+            <option value="alta">🔴 Alta</option>
+            <option value="media">🟡 Media</option>
+            <option value="baja">🟢 Baja</option>
+          </select>
+        </div>
+        <div class="form-field full-width">
+          <label>Notas (opcional)</label>
+          <input type="text" [(ngModel)]="newWishItem.notas" placeholder="Esperar oferta, requiere DLC base..." />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" (click)="addWishItem()" [disabled]="!newWishItem.nombre">
+          <span class="material-symbols-outlined">add_task</span> Agregar a la Lista
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de deseos -->
+    <div class="wish-grid" *ngIf="wishlistItems.length > 0">
+      <div class="wish-card" *ngFor="let item of wishlistItems" [attr.data-prio]="item.prioridad">
+        <div class="wish-card-top">
+          <div class="wish-meta">
+            <span class="store-tag">{{ item.plataforma }}</span>
+            <span class="prio-tag" [ngClass]="item.prioridad">{{ item.prioridad }}</span>
+          </div>
+          <div class="wish-actions">
+            <button class="icon-btn move" (click)="moveToShopping(item)" title="Mover a lista de compras">
+              <span class="material-symbols-outlined">shopping_cart</span>
+            </button>
+            <button class="icon-btn del" (click)="deleteWishItem(item.id)" title="Eliminar">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+        </div>
+
+        <h3 class="wish-name">{{ item.nombre }}</h3>
+        <p class="wish-notes" *ngIf="item.notas">{{ item.notas }}</p>
+
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>Precio base</span>
+            <span>{{ fmt(item.precioBase) }}</span>
+          </div>
+          <div class="price-row tax">
+            <span>Impuesto ({{ getPctWish(item) }}%)</span>
+            <span>+{{ fmt(getImpuestoWish(item)) }}</span>
+          </div>
+          <div class="price-row total">
+            <span>Precio final</span>
+            <strong>{{ fmt(getPrecioFinalWish(item)) }}</strong>
+          </div>
+        </div>
+
+        <div class="wish-date">Añadido: {{ item.fechaAgregado }}</div>
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div class="empty-state" *ngIf="wishlistItems.length === 0 && !showWishForm">
+      <span class="material-symbols-outlined empty-icon">bookmark_border</span>
+      <p>Tu lista de deseos está vacía</p>
+      <button class="btn-primary" (click)="showWishForm = true">
+        <span class="material-symbols-outlined">add_task</span> Agregar primer juego
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ SHOPPING TAB ═══════════════ -->
+  <div *ngIf="activeTab === 'shopping'" class="tab-content">
+    <div class="shopping-layout">
+
+      <!-- ── Columna Izquierda: Listas ── -->
+      <aside class="lists-col">
+        <div class="lists-header">
+          <h3>Mis Listas</h3>
+          <button class="icon-btn add" (click)="showListForm = !showListForm" title="Nueva lista">
+            <span class="material-symbols-outlined">{{ showListForm ? 'close' : 'add_circle' }}</span>
+          </button>
+        </div>
+
+        <!-- Formulario nueva lista -->
+        <div class="mini-form" *ngIf="showListForm">
+          <input type="text" [(ngModel)]="newListName" placeholder="Nombre de la lista..." (keydown.enter)="createList()" />
+          <button class="btn-confirm" (click)="createList()" [disabled]="!newListName.trim()">
+            <span class="material-symbols-outlined">check</span>
+          </button>
+        </div>
+
+        <!-- Listado de listas -->
+        <div class="lists-menu">
+          <button *ngFor="let list of lists"
+            class="list-item"
+            [class.active]="selectedList?.id === list.id"
+            (click)="selectList(list)">
+            <div class="list-item-info">
+              <span class="list-name">{{ list.nombre }}</span>
+              <span class="list-date">{{ list.fechaCreacion }}</span>
+            </div>
+            <button class="icon-btn del-sm" (click)="$event.stopPropagation(); deleteList(list.id)" title="Eliminar lista">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </button>
+          <div class="no-lists" *ngIf="lists.length === 0">Sin listas aún.</div>
+        </div>
+      </aside>
+
+      <!-- ── Columna Derecha: Detalle ── -->
+      <main class="detail-col" *ngIf="selectedList; else noSelection">
+
+        <!-- Barra de progreso -->
+        <div class="progress-bar-wrapper">
+          <div class="progress-label">
+            <span>Progreso: {{ itemsCompradosCount }} / {{ items.length }} comprados</span>
+            <span>{{ progresoPct }}%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" [style.width.%]="progresoPct"></div>
+          </div>
+        </div>
+
+        <!-- Botón agregar ítem -->
+        <div class="detail-action-row">
+          <h3 class="list-title">{{ selectedList.nombre }}</h3>
+          <button class="btn-primary sm" (click)="showItemForm = !showItemForm">
+            <span class="material-symbols-outlined">{{ showItemForm ? 'close' : 'add' }}</span>
+            <span>{{ showItemForm ? 'Cancelar' : 'Agregar Ítem' }}</span>
+          </button>
+        </div>
+
+        <!-- Formulario agregar ítem -->
+        <div class="form-card compact" *ngIf="showItemForm">
+          <div class="form-grid">
+            <!-- Selector de Wishlist -->
+            <div class="form-field wide2" *ngIf="wishlistItems.length > 0">
+              <label>Importar de Lista de Deseos (Opcional)</label>
+              <select [(ngModel)]="selectedWishId" (change)="onWishlistSelectChange()">
+                <option value="">-- Seleccionar un juego --</option>
+                <option *ngFor="let w of wishlistItems" [value]="w.id">{{ w.nombre }} ({{ w.plataforma }})</option>
+              </select>
+            </div>
+            <div class="form-field wide2">
+              <label>Nombre del artículo</label>
+              <input type="text" [(ngModel)]="newItem.nombre" placeholder="Ej: God of War Ragnarok..." />
+            </div>
+            <div class="form-field">
+              <label>Tienda</label>
+              <select [(ngModel)]="newItem.tienda" (change)="onTiendaChange()">
+                <option *ngFor="let s of taxStores" [value]="s.label">{{ s.label }}</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Precio Base</label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" [(ngModel)]="newItem.precioBase" min="0" step="0.01" />
+              </div>
+            </div>
+            <div class="form-field narrow">
+              <label>Imp. %</label>
+              <input type="number" [(ngModel)]="newItem.porcentajeImpuesto" min="0" max="100" step="0.5" />
+            </div>
+            <div class="form-field narrow">
+              <label>Cant.</label>
+              <input type="number" [(ngModel)]="newItem.cantidad" min="1" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-primary" (click)="addItem()" [disabled]="!newItem.nombre">
+              <span class="material-symbols-outlined">playlist_add</span> Agregar
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla de ítems -->
+        <div class="items-table-wrapper" *ngIf="items.length > 0">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Artículo</th>
+                <th>Tienda</th>
+                <th class="right">Base</th>
+                <th class="right">Cant.</th>
+                <th class="right">Imp.</th>
+                <th class="right">Final</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of items" [class.row-done]="item.comprado" (click)="toggleStatus(item)">
+                <td class="check-col">
+                  <span class="material-symbols-outlined check-icon" [class.checked]="item.comprado">
+                    {{ item.comprado ? 'check_box' : 'check_box_outline_blank' }}
+                  </span>
+                </td>
+                <td class="name-col">{{ item.nombre }}</td>
+                <td><span class="store-chip">{{ item.tienda }}</span></td>
+                <td class="right mono">{{ fmt(item.precioBase) }}</td>
+                <td class="right mono">×{{ item.cantidad }}</td>
+                <td class="right mono tax-col">+{{ fmt(item.montoImpuesto) }}</td>
+                <td class="right mono final-col">{{ fmt(item.precioFinal) }}</td>
+                <td class="del-col">
+                  <button class="icon-btn del-sm" (click)="$event.stopPropagation(); deleteItem(item.id)" title="Eliminar">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Estado vacío de lista -->
+        <div class="empty-state sm" *ngIf="items.length === 0 && !showItemForm">
+          <span class="material-symbols-outlined empty-icon">shopping_cart</span>
+          <p>Esta lista está vacía. Agrega tu primer artículo.</p>
+        </div>
+
+        <!-- Resumen de Costos -->
+        <div class="cost-summary" *ngIf="items.length > 0">
+          <div class="summary-row">
+            <div class="summary-box">
+              <span class="summary-label">Subtotal Base</span>
+              <span class="summary-value">{{ fmt(resumen.subtotalBase) }}</span>
+            </div>
+            <div class="summary-box">
+              <span class="summary-label">Total Impuestos</span>
+              <span class="summary-value tax">+{{ fmt(resumen.totalImpuesto) }}</span>
+            </div>
+            <div class="summary-box highlight">
+              <span class="summary-label">Total Estimado</span>
+              <span class="summary-value total">{{ fmt(resumen.totalFinal) }}</span>
+            </div>
+            <div class="summary-box success">
+              <span class="summary-label">Ya Comprado</span>
+              <span class="summary-value done">{{ fmt(resumen.subtotalComprado) }}</span>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <ng-template #noSelection>
+        <div class="empty-state full" *ngIf="lists.length > 0">
+          <span class="material-symbols-outlined empty-icon">point_of_sale</span>
+          <p>Selecciona una lista para ver su contenido</p>
+        </div>
+        <div class="empty-state full" *ngIf="lists.length === 0">
+          <span class="material-symbols-outlined empty-icon">receipt_long</span>
+          <p>No tienes listas de compras aún</p>
+          <button class="btn-primary" (click)="showListForm = true">
+            <span class="material-symbols-outlined">add_circle</span> Crear primera lista
+          </button>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>
