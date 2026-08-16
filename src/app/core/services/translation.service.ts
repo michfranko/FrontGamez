@@ -1,0 +1,177 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { SettingsService } from './settings.service';
+
+const TRANSLATIONS: Record<string, Record<string, string>> = {
+  es: {
+    'menu.dashboard': 'Dashboard',
+    'menu.videogames': 'Mis Videojuegos',
+    'menu.addGame': 'Agregar Juego',
+    'menu.reviewsCreate': 'Crear Reseña',
+    'menu.reviewsRead': 'Ver Reseñas',
+    'menu.shopping': 'Compras & Deseos',
+    'menu.settings': 'Ajustes',
+    'welcome.title': 'Tu Bóveda de Videojuegos',
+    'welcome.subtitle': 'Estadísticas en tiempo real y colección personal de videojuegos.',
+    'dashboard.totalGames': 'Total Juegos',
+    'dashboard.completed': 'Completados',
+    'dashboard.pending': 'Pendientes',
+    'dashboard.topPlatform': 'Plataforma Top',
+    'dashboard.topGenre': 'Género Top',
+    'dashboard.playingNow': 'Jugando Ahora',
+    'dashboard.top5': 'Top 5 Personal',
+    'dashboard.noData': 'Califica tus juegos completados para construir tu Top 5.',
+    'add.title': 'Agregar Videojuego',
+    'add.searchApi': 'Buscar con API',
+    'add.manualMode': 'Modo Manual',
+    'add.searchButton': 'Buscar datos del juego',
+    'add.gameName': 'Nombre del videojuego',
+    'add.genreType': 'Género / Tipo',
+    'add.platform': 'Plataforma',
+    'add.state': 'Estado de juego',
+    'add.version': 'Formato / Versión',
+    'add.year': 'Año de lanzamiento',
+    'add.priority': 'Prioridad',
+    'add.addButton': 'Agregar a la Colección',
+    'add.searching': 'Buscando datos en la API...',
+    'add.noResults': 'No se encontraron resultados. Ingresa los datos manualmente.',
+    'add.apiError': 'No se pudo conectar a la API. Activa el modo manual para continuar.',
+    'list.title': 'Mis Videojuegos',
+    'list.subtitle': 'Gestiona, filtra y califica tu colección personal',
+    'list.searchPlaceholder': 'Buscar por nombre o género...',
+    'list.allStates': 'Todos los estados',
+    'list.onlyCompleted': 'Solo Terminados',
+    'list.onlyPlaying': 'Solo Jugando',
+    'list.onlyPending': 'Solo Pendientes',
+    'list.allPlatforms': 'Todas las plataformas',
+    'list.allGenres': 'Todos los géneros',
+    'list.defaultOrder': 'Orden predeterminado',
+    'list.highestRating': 'Calificación más alta',
+    'list.lowestRating': 'Calificación más baja',
+    'list.mostRecent': 'Más recientes',
+    'list.oldest': 'Más antiguos',
+    'list.selectedCount': '{{count}} seleccionado{{plural}}',
+    'settings.title': 'Ajustes',
+    'settings.description': 'Configura las preferencias de tu aplicación.',
+    'settings.general': 'Preferencias Generales',
+    'settings.themeTitle': 'Tema de Interfaz',
+    'settings.themeDesc': 'Apariencia visual de la app',
+    'settings.languageTitle': 'Idioma',
+    'settings.languageDesc': 'Cambia entre español e inglés',
+    'settings.themeOption.systemTitle': 'Sistema',
+    'settings.themeOption.systemDesc': 'Usa el modo de tu dispositivo.',
+    'settings.themeOption.darkTitle': 'Dark Gaming',
+    'settings.themeOption.darkDesc': 'Estilo oscuro con neon y contrastes.',
+    'settings.themeOption.lightTitle': 'Modo Claro',
+    'settings.themeOption.lightDesc': 'Interfaz clara, brillante y limpia.',
+    'settings.language.option.es': 'Español',
+    'settings.language.option.en': 'Inglés',
+    'settings.currencyTitle': 'Moneda preferida',
+    'settings.currencyDesc': 'Moneda usada en compras y deseos.',
+    'settings.dateFormatTitle': 'Formato de fecha',
+    'settings.dateFormatDesc': 'Cómo se muestran las fechas.',
+    'settings.updated': 'Ajuste actualizado con éxito',
+    'welcome.noPlaying': 'No tienes ningún videojuego en estado "Jugando" actualmente.',
+    'list.noGamesFound': 'No se encontraron videojuegos con los filtros seleccionados.',
+    'list.noGames': 'No tienes juegos en tu biblioteca. ¡Agrega tu primer videojuego!',
+    'select.edit': 'Editar',
+    'select.remove': 'Eliminar'
+  },
+  en: {
+    'menu.dashboard': 'Dashboard',
+    'menu.videogames': 'My Games',
+    'menu.addGame': 'Add Game',
+    'menu.reviewsCreate': 'Create Review',
+    'menu.reviewsRead': 'View Reviews',
+    'menu.shopping': 'Shopping & Wishlist',
+    'menu.settings': 'Settings',
+    'welcome.title': 'Your Game Vault',
+    'welcome.subtitle': 'Real-time stats and your personal game collection.',
+    'dashboard.totalGames': 'Total Games',
+    'dashboard.completed': 'Completed',
+    'dashboard.pending': 'Pending',
+    'dashboard.topPlatform': 'Top Platform',
+    'dashboard.topGenre': 'Top Genre',
+    'dashboard.playingNow': 'Playing Now',
+    'dashboard.top5': 'Personal Top 5',
+    'dashboard.noData': 'Rate your completed games to build your Top 5.',
+    'add.title': 'Add Game',
+    'add.searchApi': 'Search with API',
+    'add.manualMode': 'Manual Mode',
+    'add.searchButton': 'Search Game Data',
+    'add.gameName': 'Game Name',
+    'add.genreType': 'Genre / Type',
+    'add.platform': 'Platform',
+    'add.state': 'Game State',
+    'add.version': 'Format / Version',
+    'add.year': 'Release Year',
+    'add.priority': 'Priority',
+    'add.addButton': 'Add to Collection',
+    'add.searching': 'Searching API data...',
+    'add.noResults': 'No results found. Enter the data manually.',
+    'add.apiError': 'Unable to connect to API. Use manual mode to continue.',
+    'list.title': 'My Games',
+    'list.subtitle': 'Manage, filter and rate your personal collection',
+    'list.searchPlaceholder': 'Search by name or genre...',
+    'list.allStates': 'All states',
+    'list.onlyCompleted': 'Only Completed',
+    'list.onlyPlaying': 'Only Playing',
+    'list.onlyPending': 'Only Pending',
+    'list.allPlatforms': 'All platforms',
+    'list.allGenres': 'All genres',
+    'list.defaultOrder': 'Default order',
+    'list.highestRating': 'Highest rating',
+    'list.lowestRating': 'Lowest rating',
+    'list.mostRecent': 'Newest first',
+    'list.oldest': 'Oldest first',
+    'list.selectedCount': '{{count}} selected',
+    'settings.title': 'Settings',
+    'settings.description': 'Configure your app preferences.',
+    'settings.general': 'General Preferences',
+    'settings.themeTitle': 'Interface Theme',
+    'settings.themeDesc': 'How the app should look.',
+    'settings.languageTitle': 'Language',
+    'settings.languageDesc': 'Switch between Spanish and English',
+    'settings.themeOption.systemTitle': 'System',
+    'settings.themeOption.systemDesc': 'Use your device mode.',
+    'settings.themeOption.darkTitle': 'Dark Gaming',
+    'settings.themeOption.darkDesc': 'Dark UI with neon accents.',
+    'settings.themeOption.lightTitle': 'Light Mode',
+    'settings.themeOption.lightDesc': 'Clean, bright and fresh interface.',
+    'settings.language.option.es': 'Spanish',
+    'settings.language.option.en': 'English',
+    'settings.currencyTitle': 'Preferred currency',
+    'settings.currencyDesc': 'Currency used in shopping lists.',
+    'settings.dateFormatTitle': 'Date format',
+    'settings.dateFormatDesc': 'How dates are displayed.',
+    'settings.updated': 'Setting updated successfully',
+    'welcome.noPlaying': 'You have no games currently marked as "Playing".',
+    'list.noGamesFound': 'No games found with the selected filters.',
+    'list.noGames': 'You have no games in your library. Add your first one!',
+    'select.edit': 'Edit',
+    'select.remove': 'Remove'
+  }
+};
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TranslationService {
+  private language = new BehaviorSubject<string>('es');
+  language$ = this.language.asObservable();
+
+  constructor(private settingsService: SettingsService) {
+    const storedSettings = this.settingsService.getSettingsSync();
+    this.language.next(storedSettings.idioma || 'es');
+    this.settingsService.settings$.subscribe((settings) => {
+      if (settings.idioma && settings.idioma !== this.language.value) {
+        this.language.next(settings.idioma);
+      }
+    });
+  }
+
+  translate(key: string): string {
+    const lang = this.language.value || 'es';
+    return TRANSLATIONS[lang]?.[key] ?? TRANSLATIONS['es']?.[key] ?? key;
+  }
+}

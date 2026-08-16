@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "FrontGamez": {
+    "GameVault": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -15,7 +15,7 @@
           "options": {
             "browser": "src/main.ts",
             "baseHref": "./",
-            "outputPath": "dist/FrontGamez",
+            "outputPath": "dist/GameVault",
             "polyfills": [
               "zone.js"
             ],
@@ -58,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "FrontGamez:build:production"
+              "buildTarget": "GameVault:build:production"
             },
             "development": {
-              "buildTarget": "FrontGamez:build:development"
+              "buildTarget": "GameVault:build:development"
             }
           },
           "defaultConfiguration": "development"

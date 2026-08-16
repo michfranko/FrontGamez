@@ -22,8 +22,13 @@ export class VideogamesListComponent {
   filteredGames: Game[] = [];
   searchTerm: string = '';
   sortOption: string = '';
+  statusFilter: string = '';
+  platformFilter: string = '';
+  genreFilter: string = '';
   selectedGame: Game | null = null;
   reviewsMap: { [gameId: string]: any } = {};
+  platformOptions: string[] = [];
+  genreOptions: string[] = [];
 
   private gameService = inject(GameService);
   private reviewService = inject(ReviewService);
@@ -33,6 +38,7 @@ export class VideogamesListComponent {
     this.videogames$ = this.gameService.games$;
     this.videogames$.subscribe(games => {
       this.allGames = games;
+      this.refreshFilters();
       this.loadReviews();
     });
 
@@ -51,17 +57,33 @@ export class VideogamesListComponent {
    */
   async loadReviews() {
     const reviewsMap: { [gameId: string]: any } = {};
-    
-    // Obtener las reseñas en paralelo desde el repositorio local
+
     await Promise.all(this.allGames.map(async (game) => {
       const review = await this.reviewService.getReviewForGame(game.id);
       if (review) {
         reviewsMap[game.id] = review;
       }
     }));
-    
+
     this.reviewsMap = reviewsMap;
     this.filterGames();
+  }
+
+  refreshFilters() {
+    const platforms = new Set<string>();
+    const genres = new Set<string>();
+
+    this.allGames.forEach(game => {
+      if (game.plataforma) platforms.add(game.plataforma);
+      if (game.tipo) {
+        game.tipo.split('/').map(part => part.trim()).forEach(part => {
+          if (part) genres.add(part);
+        });
+      }
+    });
+
+    this.platformOptions = Array.from(platforms).sort();
+    this.genreOptions = Array.from(genres).sort();
   }
 
   /**
@@ -69,43 +91,62 @@ export class VideogamesListComponent {
    */
   filterGames() {
     let games = [...this.allGames];
-    
-    // Filtro por nombre
+
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      games = games.filter(g => g.nombre?.toLowerCase().includes(term));
+      games = games.filter(g => g.nombre?.toLowerCase().includes(term) || g.tipo?.toLowerCase().includes(term));
     }
-    
-    // Orden y filtros de estado/versión
+
+    if (this.statusFilter) {
+      games = games.filter(g => g.estado === this.statusFilter);
+    }
+
+    if (this.platformFilter) {
+      games = games.filter(g => g.plataforma === this.platformFilter);
+    }
+
+    if (this.genreFilter) {
+      games = games.filter(g => g.tipo?.toLowerCase().includes(this.genreFilter.toLowerCase()));
+    }
+
+    this.applySort(games);
+  }
+
+  private applySort(games: Game[]) {
     switch (this.sortOption) {
       case 'calificacion-desc':
-        // Sólo considerar juegos que tienen calificación
-        games = games
+        this.filteredGames = games
           .filter(g => this.getCalificacion(g) !== null)
           .sort((a, b) => (this.getCalificacion(b) ?? 0) - (this.getCalificacion(a) ?? 0));
         break;
       case 'calificacion-asc':
-        games = games
+        this.filteredGames = games
           .filter(g => this.getCalificacion(g) !== null)
           .sort((a, b) => (this.getCalificacion(a) ?? 0) - (this.getCalificacion(b) ?? 0));
         break;
-      case 'estado-terminado':
-        games = games.filter(g => g.estado === 'terminado');
+      case 'fecha-reciente':
+        this.filteredGames = games.sort((a, b) => (b.fechaIncorporacion || '').localeCompare(a.fechaIncorporacion || ''));
         break;
-      case 'estado-jugando':
-        games = games.filter(g => g.estado === 'jugando');
+      case 'fecha-antigua':
+        this.filteredGames = games.sort((a, b) => (a.fechaIncorporacion || '').localeCompare(b.fechaIncorporacion || ''));
         break;
-      case 'estado-pendiente':
-        games = games.filter(g => g.estado === 'pendiente');
-        break;
-      case 'version-digital':
-        games = games.filter(g => g.version === 'digital');
-        break;
-      case 'version-fisico':
-        games = games.filter(g => g.version === 'fisico');
+      default:
+        this.filteredGames = games;
         break;
     }
-    this.filteredGames = games;
+  }
+
+  getNextGameStatus(currentStatus: string): string {
+    const order = ['pendiente', 'jugando', 'terminado'];
+    const normalized = (currentStatus || 'pendiente').toLowerCase();
+    const currentIndex = order.indexOf(normalized);
+    const nextIndex = (currentIndex === -1 ? 0 : currentIndex + 1) % order.length;
+    return order[nextIndex];
+  }
+
+  async cycleGameStatus(game: Game) {
+    const nextStatus = this.getNextGameStatus(game.estado);
+    await this.gameService.updateGame({ ...game, estado: nextStatus });
   }
 
   /**

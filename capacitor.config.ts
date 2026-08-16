@@ -1,9 +1,9 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.michfranko.frontgamez',
-  appName: 'FrontGamez',
-  webDir: 'dist/FrontGamez/browser',
+  appId: 'com.michfranko.gamevault',
+  appName: 'GameVault',
+  webDir: 'dist/GameVault/browser',
   server: {
     androidScheme: 'https'
   },

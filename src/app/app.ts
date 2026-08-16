@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   // Los providers de Firebase y Firestore deben ir en main.ts o bootstrapApplication, no aquÃ­
 })
 export class App {
-  protected title = 'FrontGamez';
+  protected title = 'GameVault';
 }
 
 

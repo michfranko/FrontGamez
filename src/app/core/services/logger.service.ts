@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class LoggerService {
-  private prefix = '[FrontGamez]';
+  private prefix = '[GameVault]';
 
   info(message: string, context?: any): void {
     console.info(`${this.prefix} INFO: ${message}`, context !== undefined ? context : '');

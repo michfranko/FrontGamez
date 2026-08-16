@@ -106,5 +106,13 @@ export const MIGRATIONS: Migration[] = [
       INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_epic', '0');
       INSERT OR IGNORE INTO settings (key, value) VALUES ('tax_otra', '0');
     `
+  },
+  {
+    version: 4,
+    sql: `
+      ALTER TABLE shopping_items ADD COLUMN seleccionado INTEGER DEFAULT 0;
+      ALTER TABLE shopping_items ADD COLUMN origenWishlist INTEGER DEFAULT 0;
+      ALTER TABLE shopping_lists ADD COLUMN presupuesto REAL DEFAULT 0;
+    `
   }
 ];

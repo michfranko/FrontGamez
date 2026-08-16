@@ -10,7 +10,7 @@ export class DatabaseManager {
   private sqliteConnection!: SQLiteConnection;
   private db!: SQLiteDBConnection;
   private isDbInitialized = false;
-  private dbName = 'frontgamez_db';
+  private dbName = 'gamevault_db';
 
   constructor(private logger: LoggerService) {}
 

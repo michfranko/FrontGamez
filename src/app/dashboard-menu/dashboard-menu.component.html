@@ -2,7 +2,7 @@
   <div class="brand">
     <span class="material-symbols-outlined logo-icon">stadia_controller</span>
     <div class="brand-text">
-      <h2>FrontGamez</h2>
+      <h2>GameVault</h2>
       <span>Gaming Vault App</span>
     </div>
   </div>
@@ -10,43 +10,43 @@
     <li>
       <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
         <span class="material-symbols-outlined nav-icon">dashboard</span>
-        <span>Dashboard</span>
+        <span>{{ 'menu.dashboard' | translate }}</span>
       </a>
     </li>
     <li>
       <a routerLink="/dashboard/videogames/list" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">sports_esports</span>
-        <span>Mis Videojuegos</span>
+        <span>{{ 'menu.videogames' | translate }}</span>
       </a>
     </li>
     <li>
       <a routerLink="/dashboard/videogames/add" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">library_add</span>
-        <span>Agregar Juego</span>
+        <span>{{ 'menu.addGame' | translate }}</span>
       </a>
     </li>
     <li>
       <a routerLink="/dashboard/reviews/create" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">rate_review</span>
-        <span>Crear Reseña</span>
+        <span>{{ 'menu.reviewsCreate' | translate }}</span>
       </a>
     </li>
     <li>
       <a routerLink="/dashboard/reviews/read" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">reviews</span>
-        <span>Ver Reseñas</span>
+        <span>{{ 'menu.reviewsRead' | translate }}</span>
       </a>
     </li>
     <li>
       <a routerLink="/dashboard/shopping" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">shopping_bag</span>
-        <span>Compras & Deseos</span>
+        <span>{{ 'menu.shopping' | translate }}</span>
       </a>
     </li>
     <li>
       <a routerLink="/dashboard/settings" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">settings</span>
-        <span>Ajustes / Respaldos</span>
+        <span>{{ 'menu.settings' | translate }}</span>
       </a>
     </li>
   </ul>

@@ -1,16 +1,16 @@
 .search-sort-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   background: var(--bg-surface);
   backdrop-filter: var(--glass-backdrop);
   -webkit-backdrop-filter: var(--glass-backdrop);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
-  padding: 1.25rem 2rem;
+  padding: 1.25rem 1.75rem;
   box-shadow: var(--card-shadow);
 }
 
@@ -19,8 +19,29 @@
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1;
   min-width: 240px;
+}
+
+.filter-group {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 1rem;
+  flex: 1 1 100%;
+}
+
+@media (max-width: 980px) {
+  .filter-group {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .filter-group {
+    grid-template-columns: 1fr;
+  }
+  .search-sort-bar {
+    padding: 1rem;
+  }
 }
 
 .search-icon,
@@ -73,6 +94,52 @@
   border-radius: var(--border-radius-md);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   height: 44px;
+}
+
+.bulk-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--border-radius-lg);
+}
+
+.bulk-info {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.btn-bulk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-radius: var(--border-radius-md);
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: var(--transition-smooth);
+}
+
+.btn-bulk:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-bulk.danger {
+  background: rgba(255, 79, 79, 0.15);
+  border-color: rgba(255, 79, 79, 0.3);
+}
+
+.btn-bulk.danger:hover {
+  background: rgba(255, 79, 79, 0.25);
 }
 
 .badge-label {

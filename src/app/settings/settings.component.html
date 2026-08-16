@@ -1,33 +1,43 @@
 <div class="settings-container">
   <div class="header-section">
-    <h2><span class="material-symbols-outlined header-icon">settings</span> Ajustes y Respaldos</h2>
-    <p>Configura las preferencias de tu aplicación y gestiona las copias de seguridad de SQLite.</p>
+    <h2><span class="material-symbols-outlined header-icon">settings</span> {{ 'settings.title' | translate }}</h2>
+    <p>{{ 'settings.description' | translate }}</p>
   </div>
 
   <div class="settings-grid">
-    <!-- Preferencias de la App -->
     <section class="settings-card">
       <div class="card-header">
         <span class="material-symbols-outlined card-icon">tune</span>
-        <h3>Preferencias Generales</h3>
+        <h3>{{ 'settings.general' | translate }}</h3>
       </div>
-      
+
       <div class="setting-item">
         <div class="item-text">
-          <label>Tema de Interfaz</label>
-          <span>Apariencia visual de la app</span>
+          <label>{{ 'settings.themeTitle' | translate }}</label>
+          <span>{{ 'settings.themeDesc' | translate }}</span>
         </div>
         <select [(ngModel)]="settings.tema" (change)="updateSetting('tema', settings.tema)">
-          <option value="system">Sistema (Auto)</option>
-          <option value="dark">Dark Gaming Neón</option>
-          <option value="light">Modo Claro</option>
+          <option value="system">{{ 'settings.themeOption.systemTitle' | translate }}</option>
+          <option value="dark">{{ 'settings.themeOption.darkTitle' | translate }}</option>
+          <option value="light">{{ 'settings.themeOption.lightTitle' | translate }}</option>
         </select>
       </div>
 
       <div class="setting-item">
         <div class="item-text">
-          <label>Moneda Preferida</label>
-          <span>Moneda usada en las listas de compras</span>
+          <label>{{ 'settings.languageTitle' | translate }}</label>
+          <span>{{ 'settings.languageDesc' | translate }}</span>
+        </div>
+        <select [(ngModel)]="settings.idioma" (change)="updateSetting('idioma', settings.idioma)">
+          <option value="es">{{ 'settings.language.option.es' | translate }}</option>
+          <option value="en">{{ 'settings.language.option.en' | translate }}</option>
+        </select>
+      </div>
+
+      <div class="setting-item">
+        <div class="item-text">
+          <label>{{ 'settings.currencyTitle' | translate }}</label>
+          <span>{{ 'settings.currencyDesc' | translate }}</span>
         </div>
         <select [(ngModel)]="settings.moneda" (change)="updateSetting('moneda', settings.moneda)">
           <option value="USD">USD ($)</option>
@@ -39,44 +49,13 @@
 
       <div class="setting-item">
         <div class="item-text">
-          <label>Formato de Fecha</label>
-          <span>Visualización en métricas</span>
+          <label>{{ 'settings.dateFormatTitle' | translate }}</label>
+          <span>{{ 'settings.dateFormatDesc' | translate }}</span>
         </div>
         <select [(ngModel)]="settings.formatoFecha" (change)="updateSetting('formatoFecha', settings.formatoFecha)">
           <option value="YYYY-MM-DD">YYYY-MM-DD</option>
           <option value="DD/MM/YYYY">DD/MM/YYYY</option>
         </select>
-      </div>
-    </section>
-
-    <!-- Respaldos y Copias de Seguridad -->
-    <section class="settings-card backup-card">
-      <div class="card-header">
-        <span class="material-symbols-outlined card-icon highlight">cloud_download</span>
-        <h3>Copias de Seguridad (Backup JSON)</h3>
-      </div>
-
-      <div class="backup-action-box">
-        <h4>Exportar Copia de Seguridad</h4>
-        <p>Genera un archivo JSON con todos tus juegos, reseñas, listas de compras y configuraciones en el almacenamiento local.</p>
-        <button (click)="exportBackup()" [disabled]="isExporting" class="btn-backup-export">
-          <span class="material-symbols-outlined">download_for_offline</span>
-          <span>{{ isExporting ? 'Exportando...' : 'Exportar Base de Datos' }}</span>
-        </button>
-        <div *ngIf="lastBackupPath" class="backup-uri-box">
-          <span>Ubicación:</span>
-          <code>{{ lastBackupPath }}</code>
-        </div>
-      </div>
-
-      <div class="backup-action-box">
-        <h4>Restaurar Base de Datos</h4>
-        <p>Pega a continuación la cadena JSON de tu copia de seguridad para restaurar la base de datos.</p>
-        <textarea [(ngModel)]="backupJsonInput" placeholder="Pega el contenido JSON de respaldo aquí..." rows="4"></textarea>
-        <button (click)="importBackup()" [disabled]="isImporting || !backupJsonInput.trim()" class="btn-backup-import">
-          <span class="material-symbols-outlined">settings_backup_restore</span>
-          <span>{{ isImporting ? 'Restaurando...' : 'Restaurar Datos' }}</span>
-        </button>
       </div>
     </section>
   </div>

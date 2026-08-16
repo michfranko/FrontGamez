@@ -6,34 +6,62 @@
   border-radius: var(--border-radius-lg);
   box-shadow: var(--card-shadow);
   width: 100%;
-  max-width: 600px;
+  max-width: 720px;
   margin: 2rem auto;
-  padding: 2.5rem;
+  padding: 2rem;
 }
 
 .videogames-add-container h2 {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 2rem;
-  background: linear-gradient(135deg, #fff 40%, var(--text-secondary) 100%);
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #fff 35%, var(--text-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Grupos de Formulario */
+.inline-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  justify-content: center;
+  margin-bottom: 1.4rem;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-radius: var(--border-radius-md);
+  padding: 0.9rem 1.1rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: var(--transition-smooth);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-  width: 100%;
+  gap: 0.55rem;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+.full-width {
+  grid-column: 1 / -1;
 }
 
 .videogames-add-container label {
@@ -44,11 +72,10 @@
   letter-spacing: 0.05em;
 }
 
-/* Entradas y Selectores */
 .videogames-add-container input,
 .videogames-add-container select {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.95rem 1rem;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
   font-size: 0.95rem;
@@ -73,20 +100,89 @@
   padding-right: 2.5rem;
 }
 
-.videogames-add-container select option {
-  background-color: var(--bg-dark);
+.api-feedback-block {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.2rem;
+  padding: 0.95rem 1rem;
+  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #fff;
 }
 
-/* Enfoque / Focus */
-.videogames-add-container input:focus,
-.videogames-add-container select:focus {
-  border-color: var(--primary);
-  background: rgba(0, 0, 0, 0.35);
-  box-shadow: 0 0 10px var(--primary-glow);
+.api-feedback-block.error {
+  background: rgba(255, 79, 79, 0.15);
+  border-color: rgba(255, 79, 79, 0.25);
 }
 
-/* Botón de Enviar */
+.loading-icon,
+.error-icon {
+  font-size: 1.25rem;
+}
+
+.search-results {
+  margin-bottom: 1.5rem;
+}
+
+.search-results h3 {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.result-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.result-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.95rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: var(--border-radius-md);
+  color: #fff;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.result-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(124, 77, 255, 0.4);
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.result-info strong {
+  font-size: 1rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-end;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  min-width: 80px;
+  text-align: right;
+}
+
 .btn-submit {
   display: flex;
   align-items: center;
@@ -117,22 +213,12 @@
   color: var(--text-secondary);
   cursor: not-allowed;
   box-shadow: none;
-  transform: none;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
-.btn-icon {
-  font-size: 1.25rem;
-}
-
-/* Responsividad */
-@media (max-width: 580px) {
-  .form-grid {
+@media (max-width: 700px) {
+  .form-row {
     grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .videogames-add-container {
-    padding: 1.5rem;
   }
 }
 

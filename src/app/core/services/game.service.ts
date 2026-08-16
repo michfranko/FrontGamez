@@ -61,11 +61,29 @@ export class GameService {
   }
 
   /**
+   * Actualiza varios videojuegos en lote.
+   */
+  async bulkUpdateGames(games: Game[]): Promise<void> {
+    this.logger.info(`Actualizando ${games.length} videojuegos en lote`);
+    await Promise.all(games.map((game) => this.gameRepo.update(game)));
+    await this.refresh();
+  }
+
+  /**
    * Elimina un videojuego (los triggers de base de datos se encargan de borrar las reseñas asociadas).
    */
   async deleteGame(id: string): Promise<void> {
     this.logger.info(`Eliminando videojuego ID: ${id}`);
     await this.gameRepo.delete(id);
+    await this.refresh();
+  }
+
+  /**
+   * Elimina videojuegos en lote.
+   */
+  async bulkDeleteGames(ids: string[]): Promise<void> {
+    this.logger.info(`Eliminando ${ids.length} videojuegos en lote`);
+    await Promise.all(ids.map((id) => this.gameRepo.delete(id)));
     await this.refresh();
   }
 

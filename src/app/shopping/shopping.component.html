@@ -1,6 +1,4 @@
 <div class="shop-page">
-
-  <!-- ═══════════════ HEADER ═══════════════ -->
   <div class="page-header">
     <div class="page-title-group">
       <span class="material-symbols-outlined page-icon">shopping_bag</span>
@@ -11,7 +9,6 @@
     </div>
   </div>
 
-  <!-- ═══════════════ TABS ═══════════════ -->
   <div class="tab-bar">
     <button class="tab-btn" [class.active]="activeTab === 'wishlist'" (click)="setTab('wishlist')">
       <span class="material-symbols-outlined">auto_awesome</span>
@@ -25,10 +22,7 @@
     </button>
   </div>
 
-  <!-- ═══════════════ WISHLIST TAB ═══════════════ -->
   <div *ngIf="activeTab === 'wishlist'" class="tab-content">
-
-    <!-- Botón agregar -->
     <div class="section-action-row">
       <div class="wish-summary" *ngIf="wishlistItems.length > 0">
         <span class="material-symbols-outlined">receipt_long</span>
@@ -40,7 +34,6 @@
       </button>
     </div>
 
-    <!-- Formulario de agregar -->
     <div class="form-card" *ngIf="showWishForm">
       <h3><span class="material-symbols-outlined">edit_note</span> Nuevo Deseo</h3>
       <div class="form-grid">
@@ -81,7 +74,6 @@
       </div>
     </div>
 
-    <!-- Lista de deseos -->
     <div class="wish-grid" *ngIf="wishlistItems.length > 0">
       <div class="wish-card" *ngFor="let item of wishlistItems" [attr.data-prio]="item.prioridad">
         <div class="wish-card-top">
@@ -90,7 +82,7 @@
             <span class="prio-tag" [ngClass]="item.prioridad">{{ item.prioridad }}</span>
           </div>
           <div class="wish-actions">
-            <button class="icon-btn move" (click)="moveToShopping(item)" title="Mover a lista de compras">
+            <button class="icon-btn move" (click)="moveToShopping(item)" title="Agregar a lista de compras">
               <span class="material-symbols-outlined">shopping_cart</span>
             </button>
             <button class="icon-btn del" (click)="deleteWishItem(item.id)" title="Eliminar">
@@ -103,25 +95,15 @@
         <p class="wish-notes" *ngIf="item.notas">{{ item.notas }}</p>
 
         <div class="price-breakdown">
-          <div class="price-row">
-            <span>Precio base</span>
-            <span>{{ fmt(item.precioBase) }}</span>
-          </div>
-          <div class="price-row tax">
-            <span>Impuesto ({{ getPctWish(item) }}%)</span>
-            <span>+{{ fmt(getImpuestoWish(item)) }}</span>
-          </div>
-          <div class="price-row total">
-            <span>Precio final</span>
-            <strong>{{ fmt(getPrecioFinalWish(item)) }}</strong>
-          </div>
+          <div class="price-row"><span>Precio base</span><span>{{ fmt(item.precioBase) }}</span></div>
+          <div class="price-row tax"><span>Impuesto ({{ getPctWish(item) }}%)</span><span>+{{ fmt(getImpuestoWish(item)) }}</span></div>
+          <div class="price-row total"><span>Precio final</span><strong>{{ fmt(getPrecioFinalWish(item)) }}</strong></div>
         </div>
 
         <div class="wish-date">Añadido: {{ item.fechaAgregado }}</div>
       </div>
     </div>
 
-    <!-- Estado vacío -->
     <div class="empty-state" *ngIf="wishlistItems.length === 0 && !showWishForm">
       <span class="material-symbols-outlined empty-icon">bookmark_border</span>
       <p>Tu lista de deseos está vacía</p>
@@ -131,11 +113,8 @@
     </div>
   </div>
 
-  <!-- ═══════════════ SHOPPING TAB ═══════════════ -->
   <div *ngIf="activeTab === 'shopping'" class="tab-content">
     <div class="shopping-layout">
-
-      <!-- ── Columna Izquierda: Listas ── -->
       <aside class="lists-col">
         <div class="lists-header">
           <h3>Mis Listas</h3>
@@ -144,7 +123,6 @@
           </button>
         </div>
 
-        <!-- Formulario nueva lista -->
         <div class="mini-form" *ngIf="showListForm">
           <input type="text" [(ngModel)]="newListName" placeholder="Nombre de la lista..." (keydown.enter)="createList()" />
           <button class="btn-confirm" (click)="createList()" [disabled]="!newListName.trim()">
@@ -152,12 +130,8 @@
           </button>
         </div>
 
-        <!-- Listado de listas -->
         <div class="lists-menu">
-          <button *ngFor="let list of lists"
-            class="list-item"
-            [class.active]="selectedList?.id === list.id"
-            (click)="selectList(list)">
+          <button *ngFor="let list of lists" class="list-item" [class.active]="selectedList?.id === list.id" (click)="selectList(list)">
             <div class="list-item-info">
               <span class="list-name">{{ list.nombre }}</span>
               <span class="list-date">{{ list.fechaCreacion }}</span>
@@ -170,10 +144,7 @@
         </div>
       </aside>
 
-      <!-- ── Columna Derecha: Detalle ── -->
       <main class="detail-col" *ngIf="selectedList; else noSelection">
-
-        <!-- Barra de progreso -->
         <div class="progress-bar-wrapper">
           <div class="progress-label">
             <span>Progreso: {{ itemsCompradosCount }} / {{ items.length }} comprados</span>
@@ -184,7 +155,6 @@
           </div>
         </div>
 
-        <!-- Botón agregar ítem -->
         <div class="detail-action-row">
           <h3 class="list-title">{{ selectedList.nombre }}</h3>
           <button class="btn-primary sm" (click)="showItemForm = !showItemForm">
@@ -193,10 +163,38 @@
           </button>
         </div>
 
-        <!-- Formulario agregar ítem -->
+        <div class="budget-card" *ngIf="selectedList">
+          <div class="budget-header">
+            <div>
+              <label>Presupuesto</label>
+              <p>Controla cuánto te cuesta la compra seleccionada.</p>
+            </div>
+            <button class="btn-primary sm" (click)="saveListBudget()">Guardar</button>
+          </div>
+
+          <div class="budget-row">
+            <div class="input-prefix small">
+              <span>$</span>
+              <input type="number" min="0" step="0.01" [(ngModel)]="selectedList.presupuesto" (change)="saveListBudget()" />
+            </div>
+          </div>
+
+          <div class="budget-metrics">
+            <div class="budget-metric">
+              <span class="metric-label">Costo estimado</span>
+              <strong class="metric-value cost">{{ fmt(getSelectedSummary().totalFinal) }}</strong>
+            </div>
+            <div class="budget-metric">
+              <span class="metric-label">Restante</span>
+              <strong class="metric-value remaining" [class.negative]="presupuestoRestante < 0">{{ fmt(presupuestoRestante) }}</strong>
+            </div>
+          </div>
+
+          <div class="budget-status" *ngIf="selectedList.presupuesto" [class.warning]="presupuestoRestante < 0" [class.ok]="presupuestoRestante >= 0">{{ presupuestoEstado }}</div>
+        </div>
+
         <div class="form-card compact" *ngIf="showItemForm">
           <div class="form-grid">
-            <!-- Selector de Wishlist -->
             <div class="form-field wide2" *ngIf="wishlistItems.length > 0">
               <label>Importar de Lista de Deseos (Opcional)</label>
               <select [(ngModel)]="selectedWishId" (change)="onWishlistSelectChange()">
@@ -204,31 +202,11 @@
                 <option *ngFor="let w of wishlistItems" [value]="w.id">{{ w.nombre }} ({{ w.plataforma }})</option>
               </select>
             </div>
-            <div class="form-field wide2">
-              <label>Nombre del artículo</label>
-              <input type="text" [(ngModel)]="newItem.nombre" placeholder="Ej: God of War Ragnarok..." />
-            </div>
-            <div class="form-field">
-              <label>Tienda</label>
-              <select [(ngModel)]="newItem.tienda" (change)="onTiendaChange()">
-                <option *ngFor="let s of taxStores" [value]="s.label">{{ s.label }}</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label>Precio Base</label>
-              <div class="input-prefix">
-                <span>$</span>
-                <input type="number" [(ngModel)]="newItem.precioBase" min="0" step="0.01" />
-              </div>
-            </div>
-            <div class="form-field narrow">
-              <label>Imp. %</label>
-              <input type="number" [(ngModel)]="newItem.porcentajeImpuesto" min="0" max="100" step="0.5" />
-            </div>
-            <div class="form-field narrow">
-              <label>Cant.</label>
-              <input type="number" [(ngModel)]="newItem.cantidad" min="1" />
-            </div>
+            <div class="form-field wide2"><label>Nombre del artículo</label><input type="text" [(ngModel)]="newItem.nombre" placeholder="Ej: God of War Ragnarok..." /></div>
+            <div class="form-field"><label>Tienda</label><select [(ngModel)]="newItem.tienda" (change)="onTiendaChange()"><option *ngFor="let s of taxStores" [value]="s.label">{{ s.label }}</option></select></div>
+            <div class="form-field"><label>Precio Base</label><div class="input-prefix"><span>$</span><input type="number" [(ngModel)]="newItem.precioBase" min="0" step="0.01" /></div></div>
+            <div class="form-field narrow"><label>Imp. %</label><input type="number" [(ngModel)]="newItem.porcentajeImpuesto" min="0" max="100" step="0.5" /></div>
+            <div class="form-field narrow"><label>Cant.</label><input type="number" [(ngModel)]="newItem.cantidad" min="1" /></div>
           </div>
           <div class="form-actions">
             <button class="btn-primary" (click)="addItem()" [disabled]="!newItem.nombre">
@@ -237,36 +215,62 @@
           </div>
         </div>
 
-        <!-- Tabla de ítems -->
-        <div class="items-table-wrapper" *ngIf="items.length > 0">
+        <div class="filter-row">
+          <div class="select-wrap">
+            <label class="select-label" for="sort-select">Ordenar por</label>
+            <select id="sort-select" class="sort-select" [(ngModel)]="itemSort">
+              <option value="nombre">Nombre</option>
+              <option value="precioAsc">Precio menor a mayor</option>
+              <option value="precioDesc">Precio mayor a menor</option>
+              <option value="prioridad">Prioridad</option>
+              <option value="estado">Estado</option>
+              <option value="fecha">Fecha de agregado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="items-table-wrapper" *ngIf="filteredItems.length > 0">
           <table class="items-table">
             <thead>
               <tr>
-                <th></th>
                 <th>Artículo</th>
                 <th>Tienda</th>
                 <th class="right">Base</th>
                 <th class="right">Cant.</th>
                 <th class="right">Imp.</th>
                 <th class="right">Final</th>
-                <th></th>
+                <th>Estado</th>
+                <th class="right">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of items" [class.row-done]="item.comprado" (click)="toggleStatus(item)">
-                <td class="check-col">
-                  <span class="material-symbols-outlined check-icon" [class.checked]="item.comprado">
-                    {{ item.comprado ? 'check_box' : 'check_box_outline_blank' }}
-                  </span>
+              <tr *ngFor="let item of filteredItems" [class.row-done]="item.comprado" [class.row-selected]="item.seleccionado">
+                <td class="name-col">
+                  <div class="item-primary">{{ item.nombre }}</div>
+                  <div class="source-tag" *ngIf="item.origenWishlist">Desde Lista de deseos</div>
                 </td>
-                <td class="name-col">{{ item.nombre }}</td>
                 <td><span class="store-chip">{{ item.tienda }}</span></td>
                 <td class="right mono">{{ fmt(item.precioBase) }}</td>
                 <td class="right mono">×{{ item.cantidad }}</td>
                 <td class="right mono tax-col">+{{ fmt(item.montoImpuesto) }}</td>
                 <td class="right mono final-col">{{ fmt(item.precioFinal) }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="status-badge interactive"
+                    [ngClass]="getStatusClass(item)"
+                    (click)="handleStatusClick(item)"
+                    (pointerdown)="startStatusHold(item, $event)"
+                    (pointerup)="cancelStatusHold()"
+                    (pointerleave)="cancelStatusHold()"
+                    (pointercancel)="cancelStatusHold()"
+                    [title]="'Mantén pulsado o toca para cambiar el estado'"
+                  >
+                    {{ getStatusLabel(item) }}
+                  </button>
+                </td>
                 <td class="del-col">
-                  <button class="icon-btn del-sm" (click)="$event.stopPropagation(); deleteItem(item.id)" title="Eliminar">
+                  <button class="icon-btn del-sm" (click)="deleteItem(item.id)" title="Eliminar">
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </td>
@@ -275,34 +279,31 @@
           </table>
         </div>
 
-        <!-- Estado vacío de lista -->
-        <div class="empty-state sm" *ngIf="items.length === 0 && !showItemForm">
+        <div class="empty-state sm" *ngIf="filteredItems.length === 0 && !showItemForm">
           <span class="material-symbols-outlined empty-icon">shopping_cart</span>
-          <p>Esta lista está vacía. Agrega tu primer artículo.</p>
+          <p>No hay artículos en este filtro.</p>
         </div>
 
-        <!-- Resumen de Costos -->
         <div class="cost-summary" *ngIf="items.length > 0">
           <div class="summary-row">
             <div class="summary-box">
-              <span class="summary-label">Subtotal Base</span>
+              <span class="summary-label">Total de la lista</span>
               <span class="summary-value">{{ fmt(resumen.subtotalBase) }}</span>
             </div>
             <div class="summary-box">
-              <span class="summary-label">Total Impuestos</span>
+              <span class="summary-label">Impuestos</span>
               <span class="summary-value tax">+{{ fmt(resumen.totalImpuesto) }}</span>
             </div>
             <div class="summary-box highlight">
-              <span class="summary-label">Total Estimado</span>
+              <span class="summary-label">Total estimado</span>
               <span class="summary-value total">{{ fmt(resumen.totalFinal) }}</span>
             </div>
             <div class="summary-box success">
-              <span class="summary-label">Ya Comprado</span>
-              <span class="summary-value done">{{ fmt(resumen.subtotalComprado) }}</span>
+              <span class="summary-label">Total comprado</span>
+              <span class="summary-value done">{{ fmt(getBoughtSummary().subtotalComprado) }}</span>
             </div>
           </div>
         </div>
-
       </main>
 
       <ng-template #noSelection>
@@ -318,7 +319,7 @@
           </button>
         </div>
       </ng-template>
-
     </div>
   </div>
 </div>
+

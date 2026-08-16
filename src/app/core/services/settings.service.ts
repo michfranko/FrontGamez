@@ -46,6 +46,7 @@ export class SettingsService {
       };
       
       this.settingsSubject.next(currentSettings);
+      this.applyTheme(currentSettings.tema);
       this.logger.info('Configuraciones de la aplicación aplicadas:', currentSettings);
     } catch (err) {
       this.logger.error('Error al cargar configuraciones de base de datos', err);
@@ -66,9 +67,41 @@ export class SettingsService {
       } as AppSettings;
       
       this.settingsSubject.next(updatedSettings);
+
+      if (key === 'tema') {
+        this.applyTheme(value as AppSettings['tema']);
+      }
     } catch (err) {
       this.logger.error(`Error al guardar configuración ${key} en SQLite`, err);
     }
+  }
+
+  private systemThemeMedia?: MediaQueryList;
+
+  private applyTheme(theme: AppSettings['tema']): void {
+    const root = document.documentElement;
+    let resolvedTheme = theme;
+
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+      resolvedTheme = prefersDark.matches ? 'dark' : 'light';
+
+      if (!this.systemThemeMedia) {
+        this.systemThemeMedia = prefersDark;
+        const update = (event: MediaQueryListEvent) => {
+          if (this.settingsSubject.value.tema === 'system') {
+            root.dataset['theme'] = event.matches ? 'dark' : 'light';
+          }
+        };
+        if (typeof this.systemThemeMedia.addEventListener === 'function') {
+          this.systemThemeMedia.addEventListener('change', update);
+        } else if (typeof this.systemThemeMedia.addListener === 'function') {
+          this.systemThemeMedia.addListener(update);
+        }
+      }
+    }
+
+    root.dataset['theme'] = resolvedTheme;
   }
 
   /**
