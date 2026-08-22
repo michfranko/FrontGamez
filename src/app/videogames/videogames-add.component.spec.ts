@@ -74,6 +74,8 @@ describe('VideogamesAddComponent', () => {
     expect(options).toContain('Metroidvania');
     expect(options).toContain('Bullet Hell');
     expect(options).toContain('Beat ’em up');
+    expect(options).toContain('SoulsLike');
+    expect(options).toContain('Hack and Slash');
     expect(options).toContain('Fighting');
     expect(options).toContain('Sandbox');
     expect(options).toContain('Survival');
