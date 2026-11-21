@@ -45,17 +45,35 @@ export class ReviewService {
   /**
    * Guarda una reseña y actualiza la calificación en la entidad Game correspondiente.
    */
-  async saveReview(gameId: string, calificacion: string | number, texto: string): Promise<void> {
-    this.logger.info(`Guardando reseña para juego ID: ${gameId} con calificación: ${calificacion}`);
-    
-    if (!gameId || !texto) {
+  async saveReview(
+    gameIdOrObj: string | Review,
+    calificacion?: string | number,
+    texto?: string
+  ): Promise<void> {
+    let gameId: string;
+    let calif: string | number;
+    let txt: string;
+
+    if (typeof gameIdOrObj === 'object' && gameIdOrObj !== null) {
+      gameId = gameIdOrObj.game_id;
+      calif = gameIdOrObj.calificacion;
+      txt = gameIdOrObj.texto;
+    } else {
+      gameId = gameIdOrObj;
+      calif = calificacion!;
+      txt = texto!;
+    }
+
+    this.logger.info(`Guardando reseña para juego ID: ${gameId} con calificación: ${calif}`);
+
+    if (!gameId || !txt) {
       throw new Error('El ID de juego y el texto de la reseña son obligatorios.');
     }
 
     const review: Review = {
       game_id: gameId,
-      calificacion,
-      texto
+      calificacion: calif,
+      texto: txt
     };
 
     // 1. Guardar la reseña en la tabla 'reviews'
@@ -64,7 +82,7 @@ export class ReviewService {
     // 2. Obtener el juego para actualizar su calificación principal
     const game = await this.gameRepo.getById(gameId);
     if (game) {
-      game.calificacion = calificacion;
+      game.calificacion = calif;
       await this.gameRepo.update(game);
     }
 
@@ -72,6 +90,7 @@ export class ReviewService {
     await this.refresh();
     await this.gameService.refresh();
   }
+
 
   /**
    * Elimina una reseña y resetea la calificación en el juego asociado.

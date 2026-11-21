@@ -1,100 +1,84 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { GameService } from './core/services/game.service';
-import { StatisticsService } from './core/services/statistics.service';
+import { RecommendationService } from './core/services/recommendation.service';
 import { Game } from './models/entities/game.model';
+import { GameCardComponent } from './shared/components/game-card.component';
+import { ToastService } from './core/services/toast.service';
 
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, GameCardComponent],
   templateUrl: './dashboard-home.component.html',
   styleUrls: ['./dashboard-home.component.css']
 })
 export class DashboardHomeComponent implements OnInit {
   games: Game[] = [];
 
-  // Propiedades requeridas por la plantilla HTML
+  // Resumen Colección
   totalGames = 0;
   completedCount = 0;
+  playingCount = 0;
   pendingCount = 0;
-  averageRating = 0;
-  favoritePlatform = 'N/A';
-  favoriteGenre = 'N/A';
-  stateMostFrequent = 'N/A';
-  top5Games: Game[] = [];
-  oldestPending: Game | null = null;
-  pendingOldestDays: number | null = null;
-  daysSinceLastCompletion: number | null = null;
-  bestYear = 'N/A';
-  // Jugando section
-  playingPlatformFilter: string = ''; // '', 'pc', 'playstation'
+
+  // Jugando ahora
   playingGames: Game[] = [];
 
+  // Sugerencia destacada
+  suggestedGame: Game | null = null;
+  ignoredSuggestionIds: string[] = [];
+
+  // Juegos mejor calificados
+  topRatedGames: Game[] = [];
+
   private gameService = inject(GameService);
-  private statisticsService = inject(StatisticsService);
+  private recommendationService = inject(RecommendationService);
+  private router = inject(Router);
+  private toast = inject(ToastService);
 
   ngOnInit() {
-    // Suscribirse de manera reactiva a los juegos en memoria local
     this.gameService.games$.subscribe((games: Game[]) => {
       this.games = games;
-      this.buildStats();
-      this.buildPlaying();
+      this.calculateStats();
+      this.updateRecommendation();
     });
   }
 
-  /**
-   * Delega el cálculo de estadísticas al StatisticsService y actualiza las propiedades de la UI.
-   */
-  buildStats() {
-    const stats = this.statisticsService.computeStats(this.games);
+  calculateStats() {
+    this.totalGames = this.games.length;
+    this.completedCount = this.games.filter(g => (g.estado || '').toLowerCase() === 'terminado').length;
+    this.playingCount = this.games.filter(g => (g.estado || '').toLowerCase() === 'jugando').length;
+    this.pendingCount = this.games.filter(g => (g.estado || '').toLowerCase() === 'pendiente').length;
 
-    this.totalGames = stats.totalGames;
-    this.completedCount = stats.completedCount;
-    this.pendingCount = stats.pendingCount;
-    this.averageRating = stats.averageRating;
-    this.favoritePlatform = stats.favoritePlatform;
-    this.favoriteGenre = stats.favoriteGenre;
-    this.stateMostFrequent = stats.stateMostFrequent;
-    this.top5Games = stats.top5Games;
-    this.oldestPending = stats.oldestPending;
-    this.pendingOldestDays = stats.pendingOldestDays;
-    this.daysSinceLastCompletion = stats.daysSinceLastCompletion;
-    this.bestYear = stats.bestYear;
-  }
-
-  buildPlaying() {
     this.playingGames = this.games.filter(g => (g.estado || '').toLowerCase() === 'jugando');
+    this.topRatedGames = this.recommendationService.getTopRatedGames(this.games, 5);
   }
 
-  filteredPlaying(platformFilter?: string) {
-    const pf = ((platformFilter ?? this.playingPlatformFilter) || '').toString().toLowerCase();
-    if (!pf) return this.playingGames;
-    return this.playingGames.filter(g => {
-      const p = (g.plataforma || '').toLowerCase();
-      if (pf === 'pc') return p.includes('pc') || p.includes('steam');
-      if (pf === 'playstation') return p.includes('playstation') || p.includes('ps');
-      return true;
-    });
+  updateRecommendation() {
+    this.suggestedGame = this.recommendationService.getRecommendation(
+      this.games,
+      this.ignoredSuggestionIds
+    );
   }
 
-  /**
-   * Retorna una etiqueta formateada para el videojuego pendiente más antiguo.
-   */
-  getOldestPendingLabel(): string {
-    if (!this.oldestPending) return 'No hay pendientes.';
-    return `${this.oldestPending.nombre} (añadido ${this.formatDate(this.oldestPending.fechaIncorporacion)})`;
+  chooseAnotherSuggestion() {
+    if (this.suggestedGame) {
+      this.ignoredSuggestionIds.push(this.suggestedGame.id);
+    }
+    this.updateRecommendation();
   }
 
-  /**
-   * Helper para formatear fechas en formato localizado en la UI.
-   */
-  formatDate(value?: string | null): string {
-    if (!value) return 'Desconocido';
-    const date = new Date(value);
-    return isNaN(date.getTime())
-      ? 'Desconocido'
-      : date.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+  async startPlayingSuggested() {
+    if (!this.suggestedGame) return;
+    this.suggestedGame.estado = 'jugando';
+    await this.gameService.updateGame(this.suggestedGame);
+    this.toast.showSuccess(`¡A jugar! "${this.suggestedGame.nombre}" pasa a estado Jugando.`);
+    this.router.navigate(['/game', this.suggestedGame.id]);
+  }
+
+  onGameClick(game: Game) {
+    this.router.navigate(['/game', game.id]);
   }
 }

@@ -6,8 +6,9 @@ import { TranslatePipe } from '../shared/pipes/translate.pipe';
 @Component({
   selector: 'app-dashboard-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard-menu.component.html',
-  styleUrls: ['./dashboard-menu.component.css', './dashboard-menu.layout.css']
+  styleUrls: ['./dashboard-menu.component.css']
 })
 export class DashboardMenuComponent {}
+

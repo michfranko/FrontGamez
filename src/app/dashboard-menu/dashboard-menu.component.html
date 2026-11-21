@@ -1,52 +1,41 @@
-<nav class="sidebar">
+<nav class="navigation-container">
   <div class="brand">
     <span class="material-symbols-outlined logo-icon">stadia_controller</span>
     <div class="brand-text">
       <h2>GameVault</h2>
-      <span>Gaming Vault App</span>
+      <span>Biblioteca Personal</span>
     </div>
   </div>
-  <ul>
+
+  <ul class="nav-links">
     <li>
       <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-        <span class="material-symbols-outlined nav-icon">dashboard</span>
-        <span>{{ 'menu.dashboard' | translate }}</span>
+        <span class="material-symbols-outlined nav-icon">home</span>
+        <span>Inicio</span>
       </a>
     </li>
     <li>
-      <a routerLink="/dashboard/videogames/list" routerLinkActive="active">
+      <a routerLink="/library" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">sports_esports</span>
-        <span>{{ 'menu.videogames' | translate }}</span>
+        <span>Biblioteca</span>
       </a>
     </li>
     <li>
-      <a routerLink="/dashboard/videogames/add" routerLinkActive="active">
-        <span class="material-symbols-outlined nav-icon">library_add</span>
-        <span>{{ 'menu.addGame' | translate }}</span>
+      <a routerLink="/shopping" routerLinkActive="active">
+        <span class="material-symbols-outlined nav-icon">shopping_cart</span>
+        <span>Compras</span>
       </a>
     </li>
     <li>
-      <a routerLink="/dashboard/reviews/create" routerLinkActive="active">
+      <a routerLink="/reviews" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">rate_review</span>
-        <span>{{ 'menu.reviewsCreate' | translate }}</span>
+        <span>Mis reseñas</span>
       </a>
     </li>
     <li>
-      <a routerLink="/dashboard/reviews/read" routerLinkActive="active">
-        <span class="material-symbols-outlined nav-icon">reviews</span>
-        <span>{{ 'menu.reviewsRead' | translate }}</span>
-      </a>
-    </li>
-    <li>
-      <a routerLink="/dashboard/shopping" routerLinkActive="active">
-        <span class="material-symbols-outlined nav-icon">shopping_bag</span>
-        <span>{{ 'menu.shopping' | translate }}</span>
-      </a>
-    </li>
-    <li>
-      <a routerLink="/dashboard/settings" routerLinkActive="active">
+      <a routerLink="/settings" routerLinkActive="active">
         <span class="material-symbols-outlined nav-icon">settings</span>
-        <span>{{ 'menu.settings' | translate }}</span>
+        <span>Configuración</span>
       </a>
     </li>
   </ul>

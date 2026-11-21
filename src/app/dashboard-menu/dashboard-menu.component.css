@@ -1,19 +1,18 @@
-.sidebar {
-  background: rgba(13, 17, 28, 0.7);
-  backdrop-filter: var(--glass-backdrop);
-  -webkit-backdrop-filter: var(--glass-backdrop);
-  border-right: 1px solid var(--border-color);
+.navigation-container {
+  background: rgba(13, 17, 28, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(168, 85, 247, 0.15);
   height: 100vh;
   position: sticky;
   top: 0;
-  padding: 2.5rem 1.5rem;
+  padding: 2rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2rem;
   z-index: 100;
 }
 
-/* Marca / Logotipo */
 .brand {
   display: flex;
   align-items: center;
@@ -22,125 +21,111 @@
 }
 
 .logo-icon {
-  font-size: 2.5rem;
-  color: var(--secondary);
-  text-shadow: 0 0 12px var(--secondary-glow);
-  animation: logo-float 4s ease-in-out infinite alternate;
-}
-
-@keyframes logo-float {
-  from { transform: translateY(0) rotate(0deg); }
-  to { transform: translateY(-3px) rotate(5deg); }
+  font-size: 2.2rem;
+  color: #a855f7;
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
 }
 
 .brand-text h2 {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
   letter-spacing: -0.01em;
-  background: linear-gradient(135deg, #fff 40%, var(--text-secondary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .brand-text span {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.7rem;
+  color: #94a3b8;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   font-weight: 600;
 }
 
-/* Navegación */
-.sidebar ul {
+.nav-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
 }
 
-.sidebar a {
+.nav-links a {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 1.1rem;
-  border-radius: var(--border-radius-md);
-  color: var(--text-secondary);
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: #94a3b8;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   border: 1px solid transparent;
-  transition: var(--transition-smooth);
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .nav-icon {
-  font-size: 1.35rem;
-  transition: var(--transition-smooth);
+  font-size: 1.3rem;
 }
 
-/* Efectos Hover */
-.sidebar a:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.05);
-  transform: translateX(3px);
+.nav-links a:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Enlace Activo */
-.sidebar a.active {
+.nav-links a.active {
   color: #fff;
-  background: linear-gradient(135deg, rgba(124, 77, 255, 0.2) 0%, rgba(124, 77, 255, 0.05) 100%);
-  border-color: rgba(124, 77, 255, 0.35);
-  box-shadow: inset 0 0 12px rgba(124, 77, 255, 0.1), 0 4px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(99, 102, 241, 0.1) 100%);
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   font-weight: 600;
 }
 
-.sidebar a.active .nav-icon {
-  color: var(--secondary);
-  text-shadow: 0 0 8px var(--secondary-glow);
+.nav-links a.active .nav-icon {
+  color: #a855f7;
 }
 
-/* Responsividad para móviles (Navbar superior horizontal) */
+/* Mobile Bottom Navigation */
 @media (max-width: 768px) {
-  .sidebar {
-    height: auto;
+  .navigation-container {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    height: calc(64px + env(safe-area-inset-bottom));
+    min-height: 64px;
     width: 100%;
-    padding: 1rem 1.5rem;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-around;
+    padding: 0 0.5rem env(safe-area-inset-bottom);
     border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    position: relative;
-    gap: 1rem;
+    border-top: 1px solid rgba(168, 85, 247, 0.2);
+    background: rgba(13, 17, 28, 0.95);
   }
-  
-  .sidebar ul {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  
-  .sidebar a {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
-    gap: 0.5rem;
-  }
-  
-  .nav-icon {
-    font-size: 1.15rem;
-  }
-  
-  .sidebar a:hover {
-    transform: none;
-  }
-}
 
-@media (max-width: 580px) {
-  .sidebar {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+  .brand {
+    display: none;
   }
-  .sidebar ul {
-    justify-content: center;
+
+  .nav-links {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .nav-links a {
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.65rem;
+    border-radius: 6px;
+  }
+
+  .nav-icon {
+    font-size: 1.25rem;
   }
 }

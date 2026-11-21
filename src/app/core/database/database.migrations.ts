@@ -18,9 +18,7 @@ export const MIGRATIONS: Migration[] = [
         fechaIncorporacion TEXT,
         fechaFinalizacion TEXT,
         anioLanzamiento TEXT,
-        calificacion TEXT,
-        coverPath TEXT,
-        bannerPath TEXT
+        calificacion TEXT
       );
 
       CREATE TABLE IF NOT EXISTS reviews (
@@ -114,5 +112,17 @@ export const MIGRATIONS: Migration[] = [
       ALTER TABLE shopping_items ADD COLUMN origenWishlist INTEGER DEFAULT 0;
       ALTER TABLE shopping_lists ADD COLUMN presupuesto REAL DEFAULT 0;
     `
+  },
+  {
+    version: 5,
+    sql: `
+      -- Migración Versión 5: GameVault 2.0 - Campos de Favorito, GameId y Soporte de Colección
+      ALTER TABLE games ADD COLUMN favorito INTEGER DEFAULT 0;
+      ALTER TABLE games ADD COLUMN gameId TEXT DEFAULT '';
+
+      CREATE INDEX IF NOT EXISTS idx_games_favorito ON games(favorito);
+      CREATE INDEX IF NOT EXISTS idx_games_gameId ON games(gameId);
+    `
   }
 ];
+

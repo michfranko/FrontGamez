@@ -1,16 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { WishlistRepository } from '../core/repositories/wishlist.repository';
 import { ShoppingRepository } from '../core/repositories/shopping.repository';
 import { PriceCalculatorService, TaxStore } from '../core/services/price-calculator.service';
 import { ToastService } from '../core/services/toast.service';
-import { WishlistItem } from '../models/entities/wishlist.model';
 import { ShoppingList } from '../models/entities/shopping-list.model';
 import { ShoppingItem, ShoppingItemCalculado } from '../models/entities/shopping-item.model';
 import { generateUUID } from '../shared/helpers/uuid.helper';
 
-type Tab = 'wishlist' | 'shopping';
 type ItemSort = 'nombre' | 'precioAsc' | 'precioDesc' | 'prioridad' | 'estado' | 'fecha';
 
 @Component({
@@ -21,12 +18,6 @@ type ItemSort = 'nombre' | 'precioAsc' | 'precioDesc' | 'prioridad' | 'estado' |
   styleUrls: ['./shopping.component.css']
 })
 export class ShoppingComponent implements OnInit {
-  activeTab: Tab = 'wishlist';
-
-  wishlistItems: WishlistItem[] = [];
-  newWishItem: Partial<WishlistItem> = this.emptyWish();
-  showWishForm = false;
-
   lists: ShoppingList[] = [];
   selectedList: ShoppingList | null = null;
   items: ShoppingItemCalculado[] = [];
@@ -36,12 +27,9 @@ export class ShoppingComponent implements OnInit {
   showListForm = false;
   newItem: Partial<ShoppingItem> = this.emptyItem();
   showItemForm = false;
-  selectedWishId = '';
-
   taxStores: TaxStore[] = [];
   resumen = { subtotalBase: 0, totalImpuesto: 0, totalFinal: 0, subtotalComprado: 0 };
 
-  private wishRepo = inject(WishlistRepository);
   private shopRepo = inject(ShoppingRepository);
   private calc = inject(PriceCalculatorService);
   private toastSvc = inject(ToastService);
@@ -51,102 +39,7 @@ export class ShoppingComponent implements OnInit {
   async ngOnInit() {
     await this.calc.loadTaxRates();
     this.taxStores = this.calc.getTaxStores();
-    await this.loadWishlist();
     await this.loadLists();
-  }
-
-  setTab(tab: Tab) { this.activeTab = tab; }
-
-  async loadWishlist() {
-    this.wishlistItems = await this.wishRepo.getAll();
-  }
-
-  emptyWish(): Partial<WishlistItem> {
-    return { nombre: '', plataforma: 'Amazon', prioridad: 'alta', notas: '', precioBase: 0 };
-  }
-
-  onTiendaWishChange() {
-    // No-op: la lógica del impuesto se calcula desde la plataforma seleccionada cuando se renderiza el total.
-  }
-
-  getPrecioFinalWish(item: WishlistItem): number {
-    const pct = this.calc.getPorcentajeByLabel(item.plataforma);
-    return this.calc.calcularPrecioFinal(item.precioBase, 1, pct);
-  }
-
-  getImpuestoWish(item: WishlistItem): number {
-    const pct = this.calc.getPorcentajeByLabel(item.plataforma);
-    return this.calc.calcularImpuesto(item.precioBase, 1, pct);
-  }
-
-  getPctWish(item: WishlistItem): number {
-    return this.calc.getPorcentajeByLabel(item.plataforma);
-  }
-
-  getTotalWishlist(): number {
-    return this.wishlistItems.reduce((sum, i) => sum + this.getPrecioFinalWish(i), 0);
-  }
-
-  async addWishItem() {
-    if (!this.newWishItem.nombre) return;
-    const item: WishlistItem = {
-      id: generateUUID(),
-      nombre: this.newWishItem.nombre!,
-      plataforma: this.newWishItem.plataforma || 'Otra',
-      prioridad: this.newWishItem.prioridad || 'media',
-      notas: this.newWishItem.notas || '',
-      fechaAgregado: new Date().toISOString().split('T')[0],
-      precioBase: Number(this.newWishItem.precioBase) || 0
-    };
-    await this.wishRepo.create(item);
-    this.toastSvc.success(`"${item.nombre}" añadido a tu Lista de Deseos`);
-    this.newWishItem = this.emptyWish();
-    this.showWishForm = false;
-    await this.loadWishlist();
-  }
-
-  async deleteWishItem(id: string) {
-    await this.wishRepo.delete(id);
-    this.toastSvc.info('Elemento eliminado de la lista de deseos');
-    await this.loadWishlist();
-  }
-
-  async moveToShopping(item: WishlistItem) {
-    if (this.lists.length === 0) {
-      this.toastSvc.warning('Crea primero una lista de compras en la pestaña "Compras Gaming"');
-      return;
-    }
-
-    const targetList = this.selectedList || this.lists[0];
-    const exists = this.items.some(
-      entry => entry.list_id === targetList.id &&
-        entry.nombre.toLowerCase() === item.nombre.toLowerCase() &&
-        entry.tienda === item.plataforma
-    );
-
-    if (exists) {
-      this.toastSvc.info(`"${item.nombre}" ya está asociado a la lista "${targetList.nombre}"`);
-      return;
-    }
-
-    const pct = this.calc.getPorcentajeByLabel(item.plataforma);
-    const shopItem: ShoppingItem = {
-      id: generateUUID(),
-      list_id: targetList.id,
-      nombre: item.nombre,
-      precioBase: item.precioBase,
-      tienda: item.plataforma,
-      porcentajeImpuesto: pct,
-      cantidad: 1,
-      comprado: false,
-      seleccionado: false,
-      origenWishlist: true
-    };
-
-    await this.shopRepo.createItem(shopItem);
-    this.toastSvc.success(`"${item.nombre}" agregado a "${targetList.nombre}"`);
-    await this.loadWishlist();
-    if (this.selectedList?.id === targetList.id) await this.loadItems();
   }
 
   async loadLists() {
@@ -202,21 +95,6 @@ export class ShoppingComponent implements OnInit {
     this.newItem.porcentajeImpuesto = pct;
   }
 
-  onWishlistSelectChange() {
-    const wishItem = this.wishlistItems.find(w => w.id === this.selectedWishId);
-    if (wishItem) {
-      this.newItem = {
-        ...this.newItem,
-        nombre: wishItem.nombre,
-        precioBase: wishItem.precioBase,
-        tienda: wishItem.plataforma,
-        porcentajeImpuesto: this.calc.getPorcentajeByLabel(wishItem.plataforma),
-        comprado: false,
-        seleccionado: false
-      };
-    }
-  }
-
   async createList() {
     if (!this.newListName.trim()) return;
     const list: ShoppingList = {
@@ -246,16 +124,14 @@ export class ShoppingComponent implements OnInit {
       cantidad: Number(this.newItem.cantidad) || 1,
       comprado: false,
       seleccionado: false,
-      origenWishlist: !!this.selectedWishId
+      origenWishlist: false
     };
 
     await this.shopRepo.createItem(item);
     this.toastSvc.success(`"${item.nombre}" agregado`);
     this.newItem = this.emptyItem();
-    this.selectedWishId = '';
     this.showItemForm = false;
     await this.loadItems();
-    await this.loadWishlist();
   }
 
   startStatusHold(item: ShoppingItemCalculado, event?: Event) {

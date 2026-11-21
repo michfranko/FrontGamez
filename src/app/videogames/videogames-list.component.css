@@ -1,2 +1,193 @@
-/* Las reglas específicas están modularizadas en layout.css y searchbar.css */
+.library-container {
+  width: 100%;
+  min-width: 0;
+  padding: 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
+.library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.title-group h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  margin: 0 0 0.35rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-icon {
+  color: var(--primary, #a855f7);
+  font-size: 2rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #94a3b8);
+  margin: 0;
+}
+
+.btn-add-game {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-add-game:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+}
+
+.tabs-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary, #f8fafc);
+  background: var(--bg-surface-hover, rgba(255, 255, 255, 0.04));
+}
+
+.tab-btn.active {
+  color: var(--text-primary, #fff);
+  background: var(--bg-surface-solid, rgba(168, 85, 247, 0.2));
+  border: 1px solid var(--border-color-hover, rgba(168, 85, 247, 0.4));
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+}
+.playing-icon { color: #3b82f6; }
+.pending-icon { color: #eab308; }
+.done-icon { color: #22c55e; }
+.fav-icon { color: #ef4444; }
+
+.tab-count {
+  background: var(--bg-surface-hover, rgba(255, 255, 255, 0.1));
+  font-size: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
+}
+
+.filters-bar {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  font-size: 1.2rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.5rem;
+  border-radius: 10px;
+  background: var(--bg-surface-solid, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  color: var(--text-primary, #fff);
+  font-size: 0.9rem;
+}
+
+.filter-controls {
+  display: flex;
+  min-width: 0;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  background: var(--bg-surface-solid, rgba(15, 23, 42, 0.8));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.filter-select option {
+  background: var(--bg-surface-solid, #131728);
+  color: var(--text-primary, #fff);
+}
+
+.games-grid {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .games-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .library-container {
+    padding: 1rem;
+  }
+
+  .filters-bar,
+  .filter-controls,
+  .search-box {
+    width: 100%;
+  }
+
+  .filter-controls > * {
+    flex: 1 1 100%;
+  }
+}

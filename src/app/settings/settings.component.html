@@ -1,62 +1,60 @@
 <div class="settings-container">
   <div class="header-section">
-    <h2><span class="material-symbols-outlined header-icon">settings</span> {{ 'settings.title' | translate }}</h2>
-    <p>{{ 'settings.description' | translate }}</p>
+    <h1>
+      <span class="material-symbols-outlined header-icon">settings</span>
+      <span>Configuración & Datos</span>
+    </h1>
+    <p class="subtitle">Personaliza tus preferencias y administra el respaldo de tu biblioteca.</p>
   </div>
 
-  <div class="settings-grid">
-    <section class="settings-card">
-      <div class="card-header">
-        <span class="material-symbols-outlined card-icon">tune</span>
-        <h3>{{ 'settings.general' | translate }}</h3>
-      </div>
+  <div class="settings-card">
+    <h3>Apariencia & Moneda</h3>
 
-      <div class="setting-item">
-        <div class="item-text">
-          <label>{{ 'settings.themeTitle' | translate }}</label>
-          <span>{{ 'settings.themeDesc' | translate }}</span>
-        </div>
-        <select [(ngModel)]="settings.tema" (change)="updateSetting('tema', settings.tema)">
-          <option value="system">{{ 'settings.themeOption.systemTitle' | translate }}</option>
-          <option value="dark">{{ 'settings.themeOption.darkTitle' | translate }}</option>
-          <option value="light">{{ 'settings.themeOption.lightTitle' | translate }}</option>
-        </select>
+    <div class="setting-row">
+      <div class="setting-info">
+        <span class="setting-label">Tema de Interfaz</span>
+        <span class="setting-desc">Personaliza la apariencia visual de GameVault</span>
       </div>
+      <select [ngModel]="settings.tema" (ngModelChange)="updateSetting('tema', $event)" class="select-box">
+        <option value="dark">Modo Oscuro Gaming</option>
+        <option value="light">Modo Claro Elegante</option>
+      </select>
+    </div>
 
-      <div class="setting-item">
-        <div class="item-text">
-          <label>{{ 'settings.languageTitle' | translate }}</label>
-          <span>{{ 'settings.languageDesc' | translate }}</span>
-        </div>
-        <select [(ngModel)]="settings.idioma" (change)="updateSetting('idioma', settings.idioma)">
-          <option value="es">{{ 'settings.language.option.es' | translate }}</option>
-          <option value="en">{{ 'settings.language.option.en' | translate }}</option>
-        </select>
+    <div class="setting-row">
+      <div class="setting-info">
+        <span class="setting-label">Moneda Principal</span>
+        <span class="setting-desc">Moneda predeterminada para compras</span>
       </div>
+      <select [ngModel]="settings.moneda" (ngModelChange)="updateSetting('moneda', $event)" class="select-box">
+        <option value="USD">USD ($)</option>
+        <option value="EUR">EUR (€)</option>
+        <option value="COP">COP ($)</option>
+        <option value="MXN">MXN ($)</option>
+      </select>
+    </div>
+  </div>
 
-      <div class="setting-item">
-        <div class="item-text">
-          <label>{{ 'settings.currencyTitle' | translate }}</label>
-          <span>{{ 'settings.currencyDesc' | translate }}</span>
-        </div>
-        <select [(ngModel)]="settings.moneda" (change)="updateSetting('moneda', settings.moneda)">
-          <option value="USD">USD ($)</option>
-          <option value="EUR">EUR (€)</option>
-          <option value="MXN">MXN ($)</option>
-          <option value="COP">COP ($)</option>
-        </select>
-      </div>
+  <div class="settings-card">
+    <h3>
+      <span class="material-symbols-outlined card-title-icon">save</span>
+      <span>Gestión de Datos (Backup & Restauración)</span>
+    </h3>
+    <p class="card-desc">
+      Exporta una copia completa de tu colección a un archivo JSON o restaura un respaldo guardado previamente.
+    </p>
 
-      <div class="setting-item">
-        <div class="item-text">
-          <label>{{ 'settings.dateFormatTitle' | translate }}</label>
-          <span>{{ 'settings.dateFormatDesc' | translate }}</span>
-        </div>
-        <select [(ngModel)]="settings.formatoFecha" (change)="updateSetting('formatoFecha', settings.formatoFecha)">
-          <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-          <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-        </select>
-      </div>
-    </section>
+    <div class="backup-actions">
+      <button class="btn btn-export" (click)="exportCollection()" [disabled]="exporting">
+        <span class="material-symbols-outlined">download</span>
+        <span>{{ exporting ? 'Exportando...' : 'Exportar Colección (JSON)' }}</span>
+      </button>
+
+      <label class="btn btn-import">
+        <span class="material-symbols-outlined">upload</span>
+        <span>{{ importing ? 'Importando...' : 'Importar Colección' }}</span>
+        <input type="file" accept=".json" (change)="onFileSelected($event)" hidden />
+      </label>
+    </div>
   </div>
 </div>

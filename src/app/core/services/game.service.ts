@@ -35,20 +35,51 @@ export class GameService {
   /**
    * Agrega un nuevo videojuego generando un UUID y recargando el estado.
    */
-  async addGame(gameData: Omit<Game, 'id' | 'calificacion' | 'coverPath' | 'bannerPath'>): Promise<string> {
+  async addGame(gameData: Partial<Game> & { nombre: string; estado: string; plataforma: string; prioridad: string; version: string; fechaIncorporacion: string; anioLanzamiento: string | number }): Promise<string> {
     const id = generateUUID();
     const newGame: Game = {
-      ...gameData,
       id,
-      calificacion: null,
-      coverPath: null,
-      bannerPath: null
+      gameId: gameData.gameId || '',
+      nombre: gameData.nombre,
+      tipo: gameData.tipo || '',
+      genres: gameData.genres || [],
+      estado: gameData.estado,
+      version: gameData.version,
+      plataforma: gameData.plataforma,
+      prioridad: gameData.prioridad,
+      fechaIncorporacion: gameData.fechaIncorporacion,
+      fechaFinalizacion: gameData.fechaFinalizacion || null,
+      anioLanzamiento: gameData.anioLanzamiento,
+      calificacion: gameData.calificacion !== undefined ? gameData.calificacion : null,
+      favorito: gameData.favorito || false
     };
 
     this.logger.info(`Agregando nuevo videojuego: ${newGame.nombre} con ID: ${id}`);
     await this.gameRepo.create(newGame);
     await this.refresh();
     return id;
+  }
+
+  /**
+   * Verifica si ya existe un juego con el mismo nombre y plataforma en la colección.
+   */
+  checkDuplicate(nombre: string, plataforma: string): Game | undefined {
+    const normName = nombre.trim().toLowerCase();
+    const normPlat = plataforma.trim().toLowerCase();
+    return this.gamesSubject.value.find(g => 
+      g.nombre.trim().toLowerCase() === normName &&
+      g.plataforma.trim().toLowerCase() === normPlat
+    );
+  }
+
+  /**
+   * Alterna el estado de favorito de un videojuego.
+   */
+  async toggleFavorite(id: string): Promise<void> {
+    const game = this.getGameByIdFromState(id);
+    if (!game) return;
+    const updated = { ...game, favorito: !game.favorito };
+    await this.updateGame(updated);
   }
 
   /**
@@ -93,4 +124,5 @@ export class GameService {
   getGameByIdFromState(id: string): Game | undefined {
     return this.gamesSubject.value.find(g => g.id === id);
   }
+
 }

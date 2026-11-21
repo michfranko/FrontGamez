@@ -1,134 +1,103 @@
-<div class="list-header-row">
-  <h2>Mis Videojuegos</h2>
-  <span class="subtitle-desc">Gestiona, filtra y califica tu colección personal</span>
+<div class="library-container">
+  <!-- Encabezado y Acción Principal -->
+  <div class="library-header">
+    <div class="title-group">
+      <h1>
+        <span class="material-symbols-outlined header-icon">sports_esports</span>
+        <span>Mi Biblioteca de Videojuegos</span>
+      </h1>
+      <p class="subtitle">Gestiona tu colección, consulta tu progreso y decide qué jugar a continuación.</p>
+    </div>
+    <button class="btn btn-add-game" (click)="openAddModal()">
+      <span class="material-symbols-outlined">add</span>
+      <span>Agregar juego</span>
+    </button>
+  </div>
+
+  <!-- Pestañas Superiores de Estado -->
+  <div class="tabs-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'todos'" (click)="setTab('todos')">
+      Todos <span class="tab-count">{{ allGames.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'jugando'" (click)="setTab('jugando')">
+      <span class="material-symbols-outlined tab-icon playing-icon">play_circle</span>
+      Jugando
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'pendiente'" (click)="setTab('pendiente')">
+      <span class="material-symbols-outlined tab-icon pending-icon">schedule</span>
+      Pendientes
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'terminado'" (click)="setTab('terminado')">
+      <span class="material-symbols-outlined tab-icon done-icon">check_circle</span>
+      Terminados
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'favoritos'" (click)="setTab('favoritos')">
+      <span class="material-symbols-outlined tab-icon fav-icon">favorite</span>
+      Favoritos
+    </button>
+  </div>
+
+  <!-- Barra de Búsqueda y Filtros -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar juego por título, plataforma o género..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearchInput()"
+      />
+    </div>
+
+    <div class="filter-controls">
+      <select [(ngModel)]="platformFilter" (change)="applyFilters()" class="filter-select">
+        <option value="">Plataforma: Todas</option>
+        <option *ngFor="let p of availablePlatforms" [value]="p">{{ p }}</option>
+      </select>
+
+      <select [(ngModel)]="genreFilter" (change)="applyFilters()" class="filter-select">
+        <option value="">Género: Todos</option>
+        <option *ngFor="let g of availableGenres" [value]="g">{{ g }}</option>
+      </select>
+
+      <select [(ngModel)]="sortOption" (change)="applyFilters()" class="filter-select">
+        <option value="fecha-reciente">Ordenar: Más recientes</option>
+        <option value="fecha-antigua">Ordenar: Más antiguos</option>
+        <option value="calificacion-desc">Ordenar: Mejor calificados</option>
+        <option value="calificacion-asc">Ordenar: Menor calificación</option>
+        <option value="nombre-asc">Ordenar: Alfabético (A-Z)</option>
+        <option value="nombre-desc">Ordenar: Alfabético (Z-A)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Contenido Asíncrono (Loading / Grid / Empty) -->
+  <app-loading-state *ngIf="loading" message="Cargando biblioteca..."></app-loading-state>
+
+  <div class="games-grid" *ngIf="!loading && filteredGames.length > 0">
+    <app-game-card
+      *ngFor="let g of filteredGames"
+      [game]="g"
+      (cardClick)="onGameClick($event)"
+      (toggleFavorite)="onToggleFavorite($event)"
+    ></app-game-card>
+  </div>
+
+  <app-empty-state
+    *ngIf="!loading && filteredGames.length === 0"
+    icon="sports_esports"
+    title="No se encontraron videojuegos"
+    message="No hay juegos que coincidan con los filtros seleccionados o tu biblioteca aún está vacía."
+    actionLabel="+ Agregar primer juego"
+    (action)="openAddModal()"
+  ></app-empty-state>
 </div>
 
-<!-- Barra de Búsqueda y Filtros -->
-<div class="search-sort-bar">
-  <div class="search-input-wrapper">
-    <span class="material-symbols-outlined search-icon">search</span>
-    <input type="text" placeholder="Buscar por nombre o género..." [(ngModel)]="searchTerm" (ngModelChange)="filterGames()" />
-  </div>
-
-  <div class="filter-group">
-    <div class="select-wrapper">
-      <span class="material-symbols-outlined filter-icon">filter_alt</span>
-      <select [(ngModel)]="statusFilter" (change)="filterGames()">
-        <option value="">Todos los estados</option>
-        <option value="terminado">Terminado</option>
-        <option value="jugando">Jugando</option>
-        <option value="pendiente">Pendiente</option>
-      </select>
-    </div>
-
-    <div class="select-wrapper">
-      <span class="material-symbols-outlined filter-icon">tablet_mac</span>
-      <select [(ngModel)]="platformFilter" (change)="filterGames()">
-        <option value="">Todas las plataformas</option>
-        <option *ngFor="let platform of platformOptions" [value]="platform">{{ platform }}</option>
-      </select>
-    </div>
-
-    <div class="select-wrapper">
-      <span class="material-symbols-outlined filter-icon">category</span>
-      <select [(ngModel)]="genreFilter" (change)="filterGames()">
-        <option value="">Todos los géneros</option>
-        <option *ngFor="let genre of genreOptions" [value]="genre">{{ genre }}</option>
-      </select>
-    </div>
-
-    <div class="select-wrapper">
-      <span class="material-symbols-outlined filter-icon">sort</span>
-      <select [(ngModel)]="sortOption" (change)="filterGames()">
-        <option value="">Orden predeterminado</option>
-        <option value="calificacion-desc">Calificación más alta</option>
-        <option value="calificacion-asc">Calificación más baja</option>
-        <option value="fecha-reciente">Más recientes</option>
-        <option value="fecha-antigua">Más antiguos</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="games-count-badge">
-    <span class="badge-label">Juegos:</span>
-    <span class="badge-count">{{ filteredGames.length }}</span>
-  </div>
-</div>
-
-<!-- Contenedor Principal (Grid + Panel de Edición) -->
-<div class="videogames-list-container">
-  <div *ngIf="filteredGames.length > 0; else noGamesOrLoading" class="games-grid">
-    <div *ngFor="let game of filteredGames" class="game-card" [class.active-card]="selectedGame?.id === game.id">
-
-      <!-- Detalle Superior (Plataforma y Versión) -->
-      <div class="card-meta-header">
-        <span class="platform-badge" [attr.data-platform]="(game.plataforma || 'other') | lowercase">
-          {{ game.plataforma || 'Consola' }}
-        </span>
-        <span class="version-badge">
-          <span class="material-symbols-outlined version-icon">
-            {{ game.version === 'digital' ? 'download' : 'album' }}
-          </span>
-          <span>{{ game.version }}</span>
-        </span>
-      </div>
-
-      <!-- Título y Tipo -->
-      <div class="card-title-section">
-        <h3>{{ game.nombre }}</h3>
-        <span class="genre-tag">{{ game.tipo }}</span>
-      </div>
-
-      <!-- Detalles del Juego (Estado y Calificación) -->
-      <div class="card-stats-section">
-        <div class="stat-row">
-          <span class="stat-label">Estado:</span>
-          <button type="button" class="status-pill interactive" [attr.data-status]="game.estado" (click)="cycleGameStatus(game)" title="Cambiar estado">
-            {{ game.estado }}
-          </button>
-        </div>
-        <div class="stat-row">
-          <span class="stat-label">Calificación:</span>
-          <span class="rating-value" [class.no-rating]="getCalificacion(game) === null">
-            <span class="material-symbols-outlined rating-star">grade</span>
-            <strong>{{ getCalificacion(game) !== null ? getCalificacion(game) : '—' }}</strong>
-          </span>
-        </div>
-      </div>
-
-      <!-- Acciones de Tarjeta -->
-      <div class="card-actions">
-        <button (click)="selectGame(game)" class="btn-edit" title="Editar Videojuego">
-          <span class="material-symbols-outlined">edit</span>
-          <span>Editar</span>
-        </button>
-        <app-videogames-delete [id]="game.id" *ngIf="!selectedGame || selectedGame.id !== game.id"></app-videogames-delete>
-      </div>
-    </div>
-  </div>
-
-  <ng-template #noGamesOrLoading>
-    <div class="no-games-box">
-      <span class="material-symbols-outlined box-icon">sports_esports</span>
-      <p *ngIf="allGames.length > 0; else emptyDb">No se encontraron videojuegos con los filtros seleccionados.</p>
-      <ng-template #emptyDb>
-        <p>No tienes juegos en tu biblioteca. ¡Agrega tu primer videojuego!</p>
-      </ng-template>
-    </div>
-  </ng-template>
-
-  <!-- Modal de Edición -->
-  <div *ngIf="selectedGame" class="modal-overlay" (click)="clearSelection()">
-    <div class="edit-panel modal-window" (click)="$event.stopPropagation()">
-      <div class="panel-header">
-        <span class="material-symbols-outlined">edit_note</span>
-        <h3>Modificar Juego</h3>
-        <button class="close-panel-btn" (click)="clearSelection()" title="Cerrar panel">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <app-videogames-edit [game]="selectedGame" (saved)="clearSelection()" (canceled)="clearSelection()"></app-videogames-edit>
-    </div>
-  </div>
-</div>
-
+<!-- Modal para agregar videojuego -->
+<app-videogames-add
+  *ngIf="showAddModal"
+  [isModal]="true"
+  (closeModal)="closeAddModal()"
+  (gameAdded)="applyFilters()"
+></app-videogames-add>

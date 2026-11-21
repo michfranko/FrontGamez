@@ -1,14 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ReviewsMenuComponent } from './reviews-menu.component';
+import { Router, RouterModule } from '@angular/router';
 import { ReviewService } from '../core/services/review.service';
 import { ToastService } from '../core/services/toast.service';
+import { EmptyStateComponent } from '../shared/components/empty-state.component';
 
 @Component({
   selector: 'app-review-read',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReviewsMenuComponent],
+  imports: [CommonModule, FormsModule, RouterModule, EmptyStateComponent],
   templateUrl: './review-read.component.html',
   styleUrls: ['./review-read.component.css']
 })
@@ -17,15 +18,13 @@ export class ReviewReadComponent implements OnInit {
   filteredReviews: any[] = [];
   searchTerm: string = '';
   editReviewId: string | null = null;
-  editReview: any = { calificacion: '', texto: '' };
+  editReview: any = { calificacion: 9.0, texto: '' };
 
   private reviewService = inject(ReviewService);
   private toastService = inject(ToastService);
-
-  constructor() {}
+  private router = inject(Router);
 
   ngOnInit() {
-    // Suscribirse de manera reactiva a los cambios en las reseñas
     this.reviewService.reviews$.subscribe((reviewsList) => {
       this.reviews = reviewsList.map(r => ({
         id: r.game_id,
@@ -33,49 +32,47 @@ export class ReviewReadComponent implements OnInit {
         calificacion: r.calificacion,
         texto: r.texto
       })).sort((a, b) => Number(b.calificacion) - Number(a.calificacion));
-      
+
       this.filterReviews();
     });
   }
 
-  /**
-   * Filtra las reseñas por el término de búsqueda.
-   */
   filterReviews() {
     const term = this.searchTerm.toLowerCase();
     this.filteredReviews = this.reviews.filter(r => (r.nombre || '').toLowerCase().includes(term));
   }
 
+  goToGameDetail(gameId: string) {
+    this.router.navigate(['/game', gameId]);
+  }
+
   startEdit(review: any) {
     this.editReviewId = review.id;
-    this.editReview = { calificacion: review.calificacion, texto: review.texto };
+    this.editReview = { calificacion: Number(review.calificacion), texto: review.texto };
   }
 
   cancelEdit() {
     this.editReviewId = null;
-    this.editReview = { calificacion: '', texto: '' };
+    this.editReview = { calificacion: 9.0, texto: '' };
   }
 
-  /**
-   * Guarda la reseña editada a través del servicio local de negocio.
-   */
   async saveEdit() {
     if (!this.editReviewId) return;
-    
-    await this.reviewService.saveReview(
-      this.editReviewId,
-      this.editReview.calificacion,
-      this.editReview.texto
-    );
-    
-    this.toastService.success('Reseña actualizada');
+
+    await this.reviewService.saveReview({
+      game_id: this.editReviewId,
+      calificacion: this.editReview.calificacion,
+      texto: this.editReview.texto
+    });
+
+    this.toastService.showSuccess('Reseña actualizada con éxito');
     this.cancelEdit();
   }
 
   async deleteReview(gameId: string) {
     if (confirm('¿Estás seguro de eliminar esta reseña?')) {
       await this.reviewService.deleteReview(gameId);
-      this.toastService.info('Reseña eliminada');
+      this.toastService.showSuccess('Reseña eliminada');
     }
   }
 }

@@ -1,0 +1,114 @@
+<div class="detail-page-container" *ngIf="!loading && game">
+  <button class="back-btn" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    <span>Volver a la Biblioteca</span>
+  </button>
+
+  <div class="detail-card">
+    <div class="info-column">
+      <button class="favorite-toggle-btn" [class.active]="game.favorito" (click)="toggleFavorite()">
+        <span class="material-symbols-outlined fav-icon">{{ game.favorito ? 'favorite' : 'favorite_border' }}</span>
+        <span>{{ game.favorito ? 'En Favoritos' : 'Añadir a Favoritos' }}</span>
+      </button>
+
+      <div class="header-group">
+        <h1 class="game-title">{{ game.nombre }}</h1>
+        <div class="badge-row">
+          <span class="badge platform-badge">{{ game.plataforma }}</span>
+          <span class="badge genre-badge" *ngIf="game.tipo">{{ game.tipo }}</span>
+          <span class="badge year-badge" *ngIf="game.anioLanzamiento">{{ game.anioLanzamiento }}</span>
+        </div>
+      </div>
+
+      <div class="metadata-grid">
+        <div class="meta-item">
+          <span class="meta-label">Estado actual</span>
+          <app-status-selector
+            [selectedStatus]="game.estado"
+            (selectedStatusChange)="onStatusChange($event)"
+          ></app-status-selector>
+        </div>
+
+        <div class="meta-item">
+          <span class="meta-label">Prioridad</span>
+          <span class="meta-val priority-tag" [ngClass]="game.prioridad.toLowerCase()">
+            {{ game.prioridad | titlecase }}
+          </span>
+        </div>
+
+        <div class="meta-item">
+          <span class="meta-label">Formato</span>
+          <span class="meta-val">{{ game.version | titlecase }}</span>
+        </div>
+
+        <div class="meta-item">
+          <span class="meta-label">Calificación</span>
+          <span class="meta-val rating-val">
+            <span class="material-symbols-outlined star-icon">star</span>
+            <span>{{ game.calificacion !== null ? game.calificacion : 'Sin calificar' }}</span>
+          </span>
+        </div>
+
+        <div class="meta-item">
+          <span class="meta-label">Fecha incorporación</span>
+          <span class="meta-val">{{ game.fechaIncorporacion || 'N/A' }}</span>
+        </div>
+
+        <div class="meta-item" *ngIf="game.fechaFinalizacion">
+          <span class="meta-label">Fecha finalización</span>
+          <span class="meta-val">{{ game.fechaFinalizacion }}</span>
+        </div>
+      </div>
+
+      <!-- Reseña Personal -->
+      <div class="review-section">
+        <h3>
+          <span class="material-symbols-outlined section-icon">rate_review</span>
+          <span>Mi Reseña Personal</span>
+        </h3>
+        <div class="review-form">
+          <div class="rating-input-row">
+            <label>Calificación (0 - 10):</label>
+            <input type="number" min="0" max="10" step="0.5" [(ngModel)]="reviewRating" class="rating-input" />
+          </div>
+          <textarea
+            class="review-textarea"
+            rows="4"
+            maxlength="1000"
+            placeholder="Escribe tus notas, experiencia o reseña personal sobre este juego..."
+            [(ngModel)]="reviewText"
+          ></textarea>
+          <div class="char-count">{{ reviewText.length }}/1000 caracteres</div>
+          <button class="btn btn-save-review" (click)="saveReview()" [disabled]="savingReview">
+            {{ savingReview ? 'Guardando...' : 'Guardar Reseña' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="actions-row">
+        <button class="btn btn-edit" (click)="openEdit()">
+          <span class="material-symbols-outlined">edit</span>
+          <span>Editar juego</span>
+        </button>
+        <button class="btn btn-delete" (click)="deleteGame()">
+          <span class="material-symbols-outlined">delete</span>
+          <span>Eliminar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edición -->
+<app-videogames-edit
+  *ngIf="editing && game"
+  [game]="game"
+  (closeModal)="closeEdit()"
+></app-videogames-edit>
+
+<div class="not-found" *ngIf="!loading && !game">
+  <h2>Juego no encontrado</h2>
+  <p>El juego especificado no existe o fue eliminado.</p>
+  <button class="btn btn-primary" (click)="goBack()">Volver a la Biblioteca</button>
+</div>

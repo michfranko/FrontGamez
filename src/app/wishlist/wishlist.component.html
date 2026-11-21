@@ -1,58 +1,86 @@
 <div class="wishlist-container">
   <div class="header-section">
-    <h2><span class="material-symbols-outlined header-icon">auto_awesome</span> Lista de Deseos</h2>
-    <p>Registra videojuegos que planeas comprar o adquirir más adelante.</p>
+    <h1>
+      <span class="material-symbols-outlined header-icon">favorite</span>
+      <span>Wishlist — Juegos por Comprar</span>
+    </h1>
+    <p class="subtitle">Guarda y organiza los videojuegos que planeas adquirir en el futuro.</p>
   </div>
 
-  <!-- Formulario rápido de adición -->
+  <!-- Formulario de adición -->
   <form (ngSubmit)="addItem()" class="wishlist-form">
-    <div class="form-row">
-      <input type="text" [(ngModel)]="newItem.nombre" name="nombre" placeholder="Nombre del juego deseado..." required class="input-nombre" />
-      
-      <select [(ngModel)]="newItem.plataforma" name="plataforma" class="select-plat">
-        <option value="PC">PC</option>
-        <option value="PlayStation">PlayStation</option>
-        <option value="Xbox">Xbox</option>
-        <option value="Nintendo Switch">Nintendo Switch</option>
-        <option value="Móvil">Móvil</option>
-      </select>
+    <h3>+ Agregar a Wishlist</h3>
+    <div class="form-grid">
+      <div class="form-group flex-2">
+        <label>Nombre del videojuego *</label>
+        <input type="text" [(ngModel)]="newItem.nombre" name="nombre" placeholder="Ej: Elden Ring..." required class="input-text" />
+      </div>
 
-      <select [(ngModel)]="newItem.prioridad" name="prioridad" class="select-prio">
-        <option value="alta">Prioridad Alta</option>
-        <option value="media">Prioridad Media</option>
-        <option value="baja">Prioridad Baja</option>
-      </select>
+      <div class="form-group flex-1">
+        <label>Precio Estimado ($)</label>
+        <input type="number" step="0.01" [(ngModel)]="newItem.precioBase" name="precioBase" placeholder="0.00" class="input-text" />
+      </div>
 
-      <button type="submit" [disabled]="!newItem.nombre" class="btn-add">
-        <span class="material-symbols-outlined">add_task</span>
-        <span>Añadir</span>
-      </button>
+      <div class="form-group flex-1">
+        <label>Prioridad</label>
+        <select [(ngModel)]="newItem.prioridad" name="prioridad" class="select-box">
+          <option value="alta">Alta</option>
+          <option value="media">Media</option>
+          <option value="baja">Baja</option>
+        </select>
+      </div>
     </div>
-    <div class="form-notes-row">
-      <input type="text" [(ngModel)]="newItem.notas" name="notas" placeholder="Notas opcionales (ej: Esperar oferta en Steam...)" class="input-notes" />
+
+    <app-platform-selector
+      [selectedPlatform]="newItem.plataforma || 'PC'"
+      (selectedPlatformChange)="newItem.plataforma = $event"
+    ></app-platform-selector>
+
+    <div class="form-group">
+      <label>Notas (opcional)</label>
+      <input type="text" [(ngModel)]="newItem.notas" name="notas" placeholder="Ej: Esperar oferta de Steam en verano..." class="input-text" />
     </div>
+
+    <button type="submit" [disabled]="!newItem.nombre" class="btn btn-add">
+      + Agregar a Wishlist
+    </button>
   </form>
 
   <!-- Lista de Elementos -->
-  <div class="items-grid">
-    <div *ngFor="let item of items" class="wish-card" [attr.data-prio]="item.prioridad">
+  <div class="wishlist-grid" *ngIf="items.length > 0">
+    <div *ngFor="let item of items" class="wish-card">
       <div class="card-header">
-        <span class="plat-badge">{{ item.plataforma }}</span>
-        <span class="prio-tag" [ngClass]="item.prioridad">{{ item.prioridad }}</span>
+        <span class="platform-tag">{{ item.plataforma }}</span>
+        <span class="priority-tag" [ngClass]="item.prioridad">{{ item.prioridad | titlecase }}</span>
       </div>
-      <h3>{{ item.nombre }}</h3>
-      <p class="notes" *ngIf="item.notas">{{ item.notas }}</p>
-      <div class="card-footer">
-        <span class="date">Añadido: {{ item.fechaAgregado }}</span>
-        <button (click)="deleteItem(item.id)" class="btn-delete" title="Eliminar de la lista">
-          <span class="material-symbols-outlined">delete</span>
-        </button>
-      </div>
-    </div>
 
-    <div *ngIf="items.length === 0" class="empty-state">
-      <span class="material-symbols-outlined empty-icon">bookmark_border</span>
-      <p>Tu lista de deseos está vacía. ¡Agrega el primer título que desees adquirir!</p>
+      <h3 class="game-name">{{ item.nombre }}</h3>
+      <p class="notes" *ngIf="item.notas">
+        <span class="material-symbols-outlined note-icon">lightbulb</span>
+        <span>{{ item.notas }}</span>
+      </p>
+
+      <div class="card-footer">
+        <div class="price-tag" *ngIf="item.precioBase">
+          <span>{{ item.precioBase | currency:'USD' }}</span>
+        </div>
+        <div class="actions">
+          <button (click)="moveToShopping(item)" class="btn btn-buy" title="Mover a Compras">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span>Comprar</span>
+          </button>
+          <button (click)="deleteItem(item.id)" class="btn btn-delete" title="Eliminar">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <app-empty-state
+    *ngIf="items.length === 0"
+    icon="favorite"
+    title="Tu Wishlist está vacía"
+    message="Registra los juegos que te interesen para no olvidar comprarlos en tus próximas ofertas."
+  ></app-empty-state>
 </div>

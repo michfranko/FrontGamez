@@ -1,119 +1,114 @@
-<section class="dashboard-welcome">
-  <!-- Cabecera de Bienvenida Móvil -->
-  <div class="dashboard-header">
-    <div class="header-main">
-      <div class="eyebrow">GameVault App</div>
-      <h1>Tu Bóveda de Videojuegos</h1>
-      <p>Estadísticas en tiempo real y colección personal de videojuegos.</p>
-    </div>
-    <div class="hero-badge">
-      <span class="material-symbols-outlined badge-icon">grade</span>
-      <div class="badge-text">
-        <span>Nota Media</span>
-        <strong>{{ averageRating || '—' }}</strong>
+<div class="dashboard-container">
+  <!-- Saludo -->
+  <div class="welcome-header">
+    <h1>¡Hola!</h1>
+    <p class="subtitle">Bienvenido a tu colección personal de videojuegos.</p>
+  </div>
+
+  <!-- Resumen Tu Colección -->
+  <div class="summary-section">
+    <h2 class="section-title">Tu colección</h2>
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <span class="stat-num">{{ totalGames }}</span>
+        <span class="stat-label">Juegos en total</span>
+      </div>
+      <div class="stat-card completed">
+        <span class="stat-num">{{ completedCount }}</span>
+        <span class="stat-label">Terminados</span>
+      </div>
+      <div class="stat-card playing">
+        <span class="stat-num">{{ playingCount }}</span>
+        <span class="stat-label">Jugando</span>
+      </div>
+      <div class="stat-card pending">
+        <span class="stat-num">{{ pendingCount }}</span>
+        <span class="stat-label">Pendientes</span>
       </div>
     </div>
   </div>
 
-  <!-- Rejilla de Métricas Principales de la App -->
-  <div class="metrics-grid">
-    <article class="metric-card">
-      <div class="metric-header">
-        <span class="material-symbols-outlined metric-icon">sports_esports</span>
-        <span class="metric-title">Total Juegos</span>
-      </div>
-      <div class="metric-value" title="{{ totalGames }}">{{ totalGames }}</div>
-    </article>
-
-    <article class="metric-card">
-      <div class="metric-header">
-        <span class="material-symbols-outlined metric-icon completed">emoji_events</span>
-        <span class="metric-title">Completados</span>
-      </div>
-      <div class="metric-value" title="{{ completedCount }}">{{ completedCount }}</div>
-    </article>
-
-    <article class="metric-card">
-      <div class="metric-header">
-        <span class="material-symbols-outlined metric-icon pending">pending_actions</span>
-        <span class="metric-title">Pendientes</span>
-      </div>
-      <div class="metric-value" title="{{ pendingCount }}">{{ pendingCount }}</div>
-    </article>
-
-    <article class="metric-card">
-      <div class="metric-header">
-        <span class="material-symbols-outlined metric-icon platform">gamepad</span>
-        <span class="metric-title">Plataforma Top</span>
-      </div>
-      <div class="metric-value text-ellipsis" title="{{ favoritePlatform }}">{{ favoritePlatform }}</div>
-    </article>
-
-    <article class="metric-card">
-      <div class="metric-header">
-        <span class="material-symbols-outlined metric-icon genre">interests</span>
-        <span class="metric-title">Género Top</span>
-      </div>
-      <div class="metric-value text-ellipsis" title="{{ favoriteGenre }}">{{ favoriteGenre }}</div>
-    </article>
+  <!-- Jugando Ahora -->
+  <div class="section-block" *ngIf="playingGames.length > 0">
+    <div class="section-header">
+      <h2>
+        <span class="material-symbols-outlined section-icon">sports_esports</span>
+        <span>Jugando ahora</span>
+      </h2>
+      <a routerLink="/library" [queryParams]="{tab: 'jugando'}" class="see-all">Ver todos</a>
+    </div>
+    <div class="playing-grid">
+      <app-game-card
+        *ngFor="let g of playingGames"
+        [game]="g"
+        (cardClick)="onGameClick($event)"
+      ></app-game-card>
+    </div>
   </div>
 
-  <!-- Sección Jugando Actualmente -->
-  <div class="playing-section">
-    <div class="playing-header">
-      <div class="playing-title-group">
-        <span class="material-symbols-outlined title-icon playing-icon">play_circle</span>
-        <h2>Jugando Ahora <small>({{ filteredPlaying().length }})</small></h2>
-      </div>
-      <div class="playing-filters">
-        <button class="filter-btn" [class.active]="playingPlatformFilter === ''" (click)="playingPlatformFilter = ''">Todos</button>
-        <button class="filter-btn" [class.active]="playingPlatformFilter === 'pc'" (click)="playingPlatformFilter = 'pc'">PC</button>
-        <button class="filter-btn" [class.active]="playingPlatformFilter === 'playstation'" (click)="playingPlatformFilter = 'playstation'">PlayStation</button>
-      </div>
+  <!-- Siguiente Sugerencia / ¿Qué debería jugar hoy? -->
+  <div class="suggestion-widget" *ngIf="suggestedGame">
+    <div class="widget-header">
+      <h2>
+        <span class="material-symbols-outlined section-icon">play_circle</span>
+        <span>¿Qué debería jugar hoy?</span>
+      </h2>
+      <span class="widget-badge">Siguiente sugerencia</span>
     </div>
 
-    <div class="playing-list">
-      <div *ngFor="let game of filteredPlaying()" class="playing-item">
-        <div class="playing-left">
-          <strong class="playing-name">{{ game.nombre }}</strong>
-          <span class="playing-platform">{{ game.plataforma || '—' }}</span>
+    <div class="suggestion-card">
+      <div class="suggestion-info">
+        <h3 class="suggested-title">{{ suggestedGame.nombre }}</h3>
+        <div class="suggested-meta">
+          <span class="tag genre">{{ suggestedGame.tipo || 'Sin género' }}</span>
+          <span class="tag platform">{{ suggestedGame.plataforma }}</span>
+          <span class="tag rating" *ngIf="suggestedGame.calificacion">
+            <span class="material-symbols-outlined star-icon">star</span> {{ suggestedGame.calificacion }}
+          </span>
         </div>
-        <div class="playing-right">
-          <span class="playing-version" *ngIf="game.version">{{ game.version }}</span>
-          <span class="status-pill" data-status="jugando">{{ game.estado }}</span>
+
+        <p class="suggestion-reason">
+          <span class="material-symbols-outlined reason-icon">lightbulb</span>
+          <span>Sugerencia basada en tus juegos pendientes, prioridad y preferencias de catálogo.</span>
+        </p>
+
+        <div class="suggestion-actions">
+          <button class="btn btn-play" (click)="startPlayingSuggested()">
+            <span class="material-symbols-outlined">play_arrow</span>
+            <span>Empezar a jugar</span>
+          </button>
+          <button class="btn btn-skip" (click)="chooseAnotherSuggestion()">
+            <span class="material-symbols-outlined">refresh</span>
+            <span>Elegir otro</span>
+          </button>
         </div>
-      </div>
-      <div *ngIf="filteredPlaying().length === 0" class="no-playing">
-        No tienes ningún videojuego en estado "Jugando" actualmente.
       </div>
     </div>
   </div>
 
-  <!-- Top 5 Personal -->
-  <div class="insights-single">
-    <section class="insight-card top-games">
-      <div class="card-title-row">
-        <span class="material-symbols-outlined title-icon gold">workspace_premium</span>
-        <h2>Top 5 Personal</h2>
+  <!-- Mis juegos mejor calificados -->
+  <div class="section-block" *ngIf="topRatedGames.length > 0">
+    <div class="section-header">
+      <h2>
+        <span class="material-symbols-outlined section-icon">star</span>
+        <span>Mis juegos mejor calificados</span>
+      </h2>
+    </div>
+    <div class="top-rated-list">
+      <div
+        *ngFor="let game of topRatedGames; let i = index"
+        class="top-rated-item"
+        (click)="onGameClick(game)"
+      >
+        <span class="rank-num">#{{ i + 1 }}</span>
+        <div class="item-info">
+          <span class="game-name">{{ game.nombre }}</span>
+          <span class="game-sub">{{ game.plataforma }} · {{ game.tipo }}</span>
+        </div>
+        <div class="game-rating">
+          <span class="material-symbols-outlined star-icon">star</span> {{ game.calificacion }}
+        </div>
       </div>
-      <ul class="top-list">
-        <li *ngFor="let game of top5Games; let i = index" class="top-item">
-          <div class="rank" [class.gold-rank]="i === 0" [class.silver-rank]="i === 1" [class.bronze-rank]="i === 2">
-            {{ i + 1 }}
-          </div>
-          <div class="game-info">
-            <span class="game-name">{{ game.nombre }}</span>
-            <span class="game-genre">{{ game.tipo }} &bull; {{ game.plataforma }}</span>
-          </div>
-          <div class="game-rating">
-            <span class="material-symbols-outlined star-icon">grade</span>
-            <span>{{ game.calificacion }}</span>
-          </div>
-        </li>
-        <li *ngIf="top5Games.length === 0" class="no-data">
-          Califica tus juegos completados para construir tu Top 5.
-        </li>
-      </ul>
-    </section>
+    </div>
   </div>
-</section>
+</div>

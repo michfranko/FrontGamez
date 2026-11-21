@@ -1,27 +1,25 @@
-<app-reviews-menu></app-reviews-menu>
-
 <div class="review-read-container">
   <div class="header-section">
-    <h2>Reseñas de la Comunidad</h2>
-    <span class="subtitle-desc">Consulta y edita tus análisis de juegos completados</span>
+    <h1>
+      <span class="material-symbols-outlined header-icon">rate_review</span>
+      <span>Mis Reseñas</span>
+    </h1>
+    <p class="subtitle">Consulta, edita y gestiona tus notas personales sobre los juegos de tu biblioteca.</p>
   </div>
 
   <!-- Buscador de Reseñas -->
   <div class="search-reviews-bar">
     <span class="material-symbols-outlined search-icon">search</span>
-    <input type="text" placeholder="Buscar reseñas por nombre de juego..." [(ngModel)]="searchTerm" (ngModelChange)="filterReviews()" />
+    <input type="text" class="search-input" placeholder="Buscar por título de videojuego..." [(ngModel)]="searchTerm" (input)="filterReviews()" />
   </div>
 
-  <!-- Cuadrícula/Listado de Reseñas -->
-  <div *ngIf="filteredReviews.length > 0; else noReviews" class="reviews-list">
+  <!-- Lista de Reseñas -->
+  <div *ngIf="filteredReviews.length > 0" class="reviews-grid">
     <article *ngFor="let review of filteredReviews" class="review-card">
       <div class="review-card-header">
-        <div class="review-title-row">
-          <span class="material-symbols-outlined quote-icon">rate_review</span>
-          <h3>{{ review.nombre }}</h3>
-        </div>
-        <div class="review-rating-badge">
-          <span class="material-symbols-outlined star-icon">grade</span>
+        <h3 class="game-title" (click)="goToGameDetail(review.id)">{{ review.nombre }}</h3>
+        <div class="rating-badge">
+          <span class="material-symbols-outlined star-icon">star</span>
           <span><b>{{ review.calificacion }}</b> / 10</span>
         </div>
       </div>
@@ -31,57 +29,55 @@
       </div>
 
       <div class="review-footer">
-        <button (click)="startEdit(review)" class="edit-btn" title="Editar Reseña">
+        <button (click)="goToGameDetail(review.id)" class="btn btn-detail">
+          <span class="material-symbols-outlined">info</span>
+          <span>Ver Ficha</span>
+        </button>
+        <button (click)="startEdit(review)" class="btn btn-edit">
           <span class="material-symbols-outlined">edit</span>
-          <span>Editar Análisis</span>
+          <span>Editar</span>
+        </button>
+        <button (click)="deleteReview(review.id)" class="btn btn-delete">
+          <span class="material-symbols-outlined">delete</span>
         </button>
       </div>
     </article>
+  </div>
 
-    <!-- Modal Flotante de Edición (Overlay) -->
-    <div class="modal-overlay" *ngIf="editReviewId">
-      <div class="modal-content">
-        <div class="modal-header">
-          <span class="material-symbols-outlined modal-header-icon">edit_note</span>
-          <h3>Editar Reseña</h3>
-          <button type="button" class="close-modal-btn" (click)="cancelEdit()" title="Cerrar modal">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        
-        <form (ngSubmit)="saveEdit()" class="edit-form">
-          <div class="form-group">
-            <label for="edit-calificacion">Calificación (0 - 10)</label>
-            <input id="edit-calificacion" type="number" [(ngModel)]="editReview.calificacion" name="editCalificacion" min="0" max="10" required />
-          </div>
-
-          <div class="form-group">
-            <label for="edit-texto">Tu Análisis</label>
-            <textarea id="edit-texto" [(ngModel)]="editReview.texto" name="editTexto" maxlength="300" placeholder="Escribe aquí tu análisis del juego..." required></textarea>
-          </div>
-
-          <div class="modal-actions">
-            <button type="submit" class="save-btn">
-              <span class="material-symbols-outlined">save</span>
-              <span>Guardar Cambios</span>
-            </button>
-            <button type="button" (click)="cancelEdit()" class="cancel-btn">
-              <span>Cancelar</span>
-            </button>
-          </div>
-        </form>
+  <!-- Modal de Edición -->
+  <div class="modal-backdrop" *ngIf="editReviewId">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Editar Mi Reseña</h3>
+        <button type="button" class="close-btn" (click)="cancelEdit()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
+
+      <form (ngSubmit)="saveEdit()" class="edit-form">
+        <div class="form-group">
+          <label>Calificación (0 - 10)</label>
+          <input type="number" [(ngModel)]="editReview.calificacion" name="calificacion" min="0" max="10" step="0.5" class="form-input" required />
+        </div>
+
+        <div class="form-group">
+          <label>Tu Análisis (hasta 1000 caracteres)</label>
+          <textarea [(ngModel)]="editReview.texto" name="texto" rows="5" maxlength="1000" class="form-textarea" placeholder="Escribe aquí tu análisis..." required></textarea>
+          <div class="char-count">{{ (editReview.texto || '').length }}/1000</div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" (click)="cancelEdit()" class="btn btn-cancel">Cancelar</button>
+          <button type="submit" class="btn btn-save">Guardar Cambios</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <ng-template #noReviews>
-    <div class="no-reviews-box">
-      <span class="material-symbols-outlined box-icon">rate_review</span>
-      <p *ngIf="searchTerm; else dbEmpty">No se encontraron reseñas para "{{ searchTerm }}".</p>
-      <ng-template #dbEmpty>
-        <p>Aún no has escrito ninguna reseña. ¡Comparte tu opinión sobre tus juegos completados!</p>
-      </ng-template>
-    </div>
-  </ng-template>
+  <app-empty-state
+    *ngIf="filteredReviews.length === 0"
+    icon="rate_review"
+    title="No tienes reseñas registradas"
+    message="Escribe opiniones y evaluaciones personales en las fichas de tus juegos completados."
+  ></app-empty-state>
 </div>
-

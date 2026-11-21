@@ -1,52 +1,61 @@
-<form *ngIf="game" (ngSubmit)="editVideogame()" #form="ngForm" class="edit-game-form">
-  <div class="form-group">
-    <label for="edit-nombre">Nombre</label>
-    <input id="edit-nombre" name="nombre" [(ngModel)]="game.nombre" placeholder="Nombre" required />
-  </div>
+<div class="modal-overlay" (click)="cancelEdit()">
+  <section class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-game-title" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="edit-game-title">Editar videojuego</h2>
+      <button type="button" class="close-modal-btn" aria-label="Cerrar edición" (click)="cancelEdit()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
 
-  <div class="form-group">
-    <label for="edit-tipo">Género / Tipo</label>
-    <input id="edit-tipo" name="tipo" [(ngModel)]="game.tipo" placeholder="Tipo de juego" required />
-  </div>
+    <form *ngIf="game" (ngSubmit)="editVideogame()" #form="ngForm" class="edit-game-form">
+      <div class="form-group">
+        <label for="edit-nombre">Nombre</label>
+        <input id="edit-nombre" name="nombre" [(ngModel)]="game.nombre" placeholder="Nombre" required />
+      </div>
 
-  <div class="form-group">
-    <label for="edit-plataforma">Plataforma</label>
-    <select id="edit-plataforma" name="plataforma" [(ngModel)]="game.plataforma" required>
-      <option value="" disabled>Selecciona plataforma</option>
-      <option value="PC">PC</option>
-      <option value="PlayStation">PlayStation</option>
-      <option value="Xbox">Xbox</option>
-      <option value="Nintendo Switch">Nintendo Switch</option>
-      <option value="Móvil">Móvil</option>
-      <option value="Otro">Otro</option>
-    </select>
-  </div>
+      <div class="form-group">
+        <label for="edit-tipo">Género / Tipo</label>
+        <input id="edit-tipo" name="tipo" [(ngModel)]="game.tipo" placeholder="Tipo de juego" required />
+      </div>
 
-  <div class="form-group">
-    <label for="edit-estado">Estado</label>
-    <select id="edit-estado" name="estado" [(ngModel)]="game.estado" required>
-      <option value="terminado">Terminado</option>
-      <option value="jugando">Jugando</option>
-      <option value="pendiente">Pendiente</option>
-    </select>
-  </div>
+      <div class="form-group">
+        <label for="edit-plataforma">Plataforma</label>
+        <select id="edit-plataforma" name="plataforma" [(ngModel)]="game.plataforma" required>
+          <option value="" disabled>Selecciona plataforma</option>
+          <option value="PC">PC</option>
+          <option value="PlayStation">PlayStation</option>
+          <option value="Xbox">Xbox</option>
+          <option value="Nintendo Switch">Nintendo Switch</option>
+          <option value="Móvil">Móvil</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
 
-  <div class="form-group">
-    <label for="edit-version">Versión</label>
-    <select id="edit-version" name="version" [(ngModel)]="game.version" required>
-      <option value="digital">Digital</option>
-      <option value="fisico">Físico</option>
-    </select>
-  </div>
+      <div class="form-group">
+        <label for="edit-estado">Estado</label>
+        <select id="edit-estado" name="estado" [(ngModel)]="game.estado" required>
+          <option value="terminado">Terminado</option>
+          <option value="jugando">Jugando</option>
+          <option value="pendiente">Pendiente</option>
+        </select>
+      </div>
 
-  <div class="form-actions-row">
-    <button type="submit" class="btn-save-edit" [disabled]="!game.nombre || !game.tipo || !game.plataforma || !game.estado || !game.version">
-      <span class="material-symbols-outlined">save</span>
-      <span>Guardar Cambios</span>
-    </button>
-    <button type="button" class="btn-cancel-edit" (click)="cancelEdit()">
-      <span>Cancelar</span>
-    </button>
-  </div>
-</form>
+      <div class="form-group">
+        <label for="edit-version">Versión</label>
+        <select id="edit-version" name="version" [(ngModel)]="game.version" required>
+          <option value="digital">Digital</option>
+          <option value="fisico">Físico</option>
+        </select>
+      </div>
+
+      <div class="form-actions-row">
+        <button type="button" class="btn-cancel-edit" (click)="cancelEdit()">Cancelar</button>
+        <button type="submit" class="btn-save-edit" [disabled]="!game.nombre || !game.tipo || !game.plataforma || !game.estado || !game.version">
+          <span class="material-symbols-outlined">save</span>
+          <span>Guardar Cambios</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
 

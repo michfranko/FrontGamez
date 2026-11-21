@@ -29,7 +29,15 @@ export class ToastService {
     this.show(message, 'success', duration);
   }
 
+  showSuccess(message: string, duration?: number): void {
+    this.show(message, 'success', duration);
+  }
+
   error(message: string, duration?: number): void {
+    this.show(message, 'error', duration);
+  }
+
+  showError(message: string, duration?: number): void {
     this.show(message, 'error', duration);
   }
 
@@ -45,3 +53,4 @@ export class ToastService {
     this.toastsSubject.next(this.toastsSubject.value.filter(t => t.id !== id));
   }
 }
+

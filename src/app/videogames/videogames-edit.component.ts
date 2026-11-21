@@ -15,6 +15,7 @@ export class VideogamesEditComponent {
   @Input() game: any;
   @Output() saved = new EventEmitter<void>();
   @Output() canceled = new EventEmitter<void>();
+  @Output() closeModal = new EventEmitter<void>();
 
   private gameService = inject(GameService);
   private toastService = inject(ToastService);
@@ -33,9 +34,11 @@ export class VideogamesEditComponent {
     });
     this.toastService.success('Videojuego actualizado con éxito');
     this.saved.emit();
+    this.closeModal.emit();
   }
 
   cancelEdit() {
     this.canceled.emit();
+    this.closeModal.emit();
   }
 }

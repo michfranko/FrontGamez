@@ -30,7 +30,7 @@ export class GameRepository {
    */
   async create(game: Game): Promise<void> {
     const sql = `
-      INSERT INTO games (id, nombre, tipo, estado, version, plataforma, prioridad, fechaIncorporacion, fechaFinalizacion, anioLanzamiento, calificacion, coverPath, bannerPath)
+      INSERT INTO games (id, nombre, tipo, estado, version, plataforma, prioridad, fechaIncorporacion, fechaFinalizacion, anioLanzamiento, calificacion, favorito, gameId)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const params = [
@@ -45,8 +45,8 @@ export class GameRepository {
       game.fechaFinalizacion,
       game.anioLanzamiento,
       game.calificacion,
-      game.coverPath,
-      game.bannerPath
+      game.favorito ? 1 : 0,
+      game.gameId || ''
     ];
     await this.db.execute(sql, params);
   }
@@ -57,7 +57,7 @@ export class GameRepository {
   async update(game: Game): Promise<void> {
     const sql = `
       UPDATE games
-      SET nombre = ?, tipo = ?, estado = ?, version = ?, plataforma = ?, prioridad = ?, fechaIncorporacion = ?, fechaFinalizacion = ?, anioLanzamiento = ?, calificacion = ?, coverPath = ?, bannerPath = ?
+      SET nombre = ?, tipo = ?, estado = ?, version = ?, plataforma = ?, prioridad = ?, fechaIncorporacion = ?, fechaFinalizacion = ?, anioLanzamiento = ?, calificacion = ?, favorito = ?, gameId = ?
       WHERE id = ?
     `;
     const params = [
@@ -71,8 +71,8 @@ export class GameRepository {
       game.fechaFinalizacion,
       game.anioLanzamiento,
       game.calificacion,
-      game.coverPath,
-      game.bannerPath,
+      game.favorito ? 1 : 0,
+      game.gameId || '',
       game.id
     ];
     await this.db.execute(sql, params);
@@ -89,10 +89,15 @@ export class GameRepository {
    * Mapea un registro plano de la base de datos SQLite a la entidad Game de TypeScript.
    */
   private mapRowToGame(row: any): Game {
+    const tipo = row.tipo || '';
+    const genres = tipo.split('/').map((s: string) => s.trim()).filter(Boolean);
+
     return {
       id: row.id,
+      gameId: row.gameId || '',
       nombre: row.nombre,
-      tipo: row.tipo,
+      tipo: tipo,
+      genres: genres,
       estado: row.estado,
       version: row.version,
       plataforma: row.plataforma,
@@ -101,8 +106,8 @@ export class GameRepository {
       fechaFinalizacion: row.fechaFinalizacion,
       anioLanzamiento: row.anioLanzamiento,
       calificacion: row.calificacion !== null && row.calificacion !== undefined ? row.calificacion : null,
-      coverPath: row.coverPath || null,
-      bannerPath: row.bannerPath || null
+      favorito: Boolean(row.favorito)
     };
   }
 }
+

@@ -1,72 +1,73 @@
-<div class="videogames-add-container">
-  <h2>Agregar Videojuego</h2>
-
-  <form (ngSubmit)="addVideogame()" #form="ngForm">
-    <div class="form-row">
-      <div class="form-group full-width">
-        <label for="nombre">Nombre del videojuego</label>
-        <input id="nombre" name="nombre" [(ngModel)]="game.nombre" placeholder="Ej: Zelda: Breath of the Wild" required />
-      </div>
+<div [class.modal-backdrop]="isModal">
+  <div [class.modal-content]="isModal" class="add-game-container">
+    <div class="modal-header">
+      <h2>+ Agregar Juego a tu Colección</h2>
+      <button *ngIf="isModal" type="button" class="close-btn" (click)="onClose()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="tipo">Género / Tipo</label>
-        <select id="tipo" name="tipo" [(ngModel)]="game.tipo" required>
-          <option value="" disabled>Selecciona género / tipo</option>
-          <option *ngFor="let genre of genreOptions" [value]="genre">{{ genre }}</option>
-          <option value="Otro">Otro</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="plataforma">Plataforma</label>
-        <select id="plataforma" name="plataforma" [(ngModel)]="game.plataforma" required>
-          <option value="" disabled>Selecciona plataforma</option>
-          <option value="PC">PC</option>
-          <option value="PlayStation">PlayStation</option>
-          <option value="Xbox">Xbox</option>
-          <option value="Nintendo Switch">Nintendo Switch</option>
-          <option value="Móvil">Móvil</option>
-          <option value="Otro">Otro</option>
-        </select>
-      </div>
+    <!-- Advertencia de duplicado -->
+    <div class="duplicate-banner" *ngIf="duplicateWarning">
+      <span class="dup-header">
+        <span class="material-symbols-outlined warn-icon">warning</span>
+        <span>{{ duplicateWarning }}</span>
+      </span>
+      <p class="duplicate-hint">¿Deseas agregar otra edición o versión diferente de este juego?</p>
     </div>
 
-    <div class="form-row">
+    <!-- Formulario Personal -->
+    <form (ngSubmit)="saveGame()" class="add-form">
       <div class="form-group">
-        <label for="estado">Estado de juego</label>
-        <select id="estado" name="estado" [(ngModel)]="game.estado" required>
-          <option value="terminado">Terminado</option>
-          <option value="jugando">Jugando</option>
-          <option value="pendiente">Pendiente</option>
-        </select>
+        <label>Nombre del videojuego *</label>
+        <input type="text" [(ngModel)]="game.nombre" name="nombre" class="form-input" required (input)="checkDuplicate()" />
       </div>
 
-      <div class="form-group">
-        <label for="version">Formato / Versión</label>
-        <select id="version" name="version" [(ngModel)]="game.version" required>
-          <option value="digital">Digital</option>
-          <option value="fisico">Físico</option>
-        </select>
-      </div>
-    </div>
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label>Año de lanzamiento</label>
+          <input type="number" [(ngModel)]="game.anioLanzamiento" name="anioLanzamiento" class="form-input" />
+        </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="prioridad">Prioridad</label>
-        <select id="prioridad" name="prioridad" [(ngModel)]="game.prioridad" required>
-          <option value="alta">Alta</option>
-          <option value="media">Media</option>
-          <option value="baja">Baja</option>
-        </select>
-      </div>
-    </div>
+        <div class="form-group flex-1">
+          <label>Prioridad</label>
+          <select [(ngModel)]="game.prioridad" name="prioridad" class="form-select">
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
 
-    <button type="submit" class="btn-submit" [disabled]="!game.nombre || !game.tipo || !game.plataforma || !game.estado || !game.version">
-      <span class="material-symbols-outlined btn-icon">add_circle</span>
-      <span>Agregar a la Colección</span>
-    </button>
-  </form>
+        <div class="form-group flex-1">
+          <label>Formato</label>
+          <select [(ngModel)]="game.version" name="version" class="form-select">
+            <option value="digital">Digital</option>
+            <option value="fisico">Físico</option>
+          </select>
+        </div>
+      </div>
+
+      <app-platform-selector
+        [selectedPlatform]="game.plataforma"
+        (selectedPlatformChange)="onPlatformChange($event)"
+      ></app-platform-selector>
+
+      <app-status-selector
+        [selectedStatus]="game.estado"
+        (selectedStatusChange)="game.estado = $event"
+      ></app-status-selector>
+
+      <app-genre-selector
+        [selectedGenres]="game.genres"
+        (selectedGenresChange)="onGenreChange($event)"
+      ></app-genre-selector>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-cancel" *ngIf="isModal" (click)="onClose()">Cancelar</button>
+        <button type="submit" class="btn btn-save" [disabled]="!game.nombre || !game.plataforma">
+          Guardar Juego en Biblioteca
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
-
